@@ -1,0 +1,109 @@
+<?php
+
+namespace App\Http\Controllers\Customer;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Payment;
+use App\Models\Product;
+use Illuminate\Support\Facades\DB;
+
+class CheckoutController extends Controller
+{
+    public function index()
+    {
+        $cart = auth()->user()->cart()->with('items.product')->first();
+        
+        if (!$cart || $cart->items->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+        }
+
+        $user = auth()->user();
+        
+        return view('customer.checkout', compact('cart', 'user'));
+    }
+
+    public function process(Request $request)
+    {
+        $validated = $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'customer_email' => 'required|email',
+            'customer_phone' => 'required|string|max:20',
+            'shipping_address' => 'required|string',
+            'city' => 'required|string|max:100',
+            'postal_code' => 'nullable|string|max:10',
+            'notes' => 'nullable|string',
+            'payment_method' => 'required|in:bank_transfer,cod',
+        ]);
+
+        $cart = auth()->user()->cart()->with('items.product')->first();
+
+        if (!$cart || $cart->items->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+        }
+
+        // Check stock availability
+        foreach ($cart->items as $item) {
+            if ($item->quantity > $item->product->stock) {
+                return back()->with('error', "Not enough stock for {$item->product->name}");
+            }
+        }
+
+        DB::beginTransaction();
+        try {
+            // Create order
+            $order = Order::create([
+                'user_id' => auth()->id(),
+                'total_amount' => $cart->getTotalAmount(),
+                'status' => 'pending',
+                'payment_method' => $validated['payment_method'],
+                'payment_status' => $validated['payment_method'] === 'cod' ? 'unpaid' : 'unpaid',
+                'customer_name' => $validated['customer_name'],
+                'customer_email' => $validated['customer_email'],
+                'customer_phone' => $validated['customer_phone'],
+                'shipping_address' => $validated['shipping_address'],
+                'city' => $validated['city'],
+                'postal_code' => $validated['postal_code'] ?? null,
+                'notes' => $validated['notes'] ?? null,
+            ]);
+
+            // Create order items and reduce stock
+            foreach ($cart->items as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item->product_id,
+                    'product_name' => $item->product->name,
+                    'quantity' => $item->quantity,
+                    'price' => $item->price,
+                    'subtotal' => $item->price * $item->quantity,
+                ]);
+
+                // Reduce stock
+                $product = Product::find($item->product_id);
+                $product->decrement('stock', $item->quantity);
+            }
+
+            // Create payment record
+            Payment::create([
+                'order_id' => $order->id,
+                'amount' => $order->total_amount,
+                'payment_method' => $validated['payment_method'],
+                'status' => 'pending',
+            ]);
+
+            // Clear cart
+            $cart->items()->delete();
+
+            DB::commit();
+
+            return redirect()->route('customer.orders.show', $order->id)
+                ->with('success', 'Order placed successfully!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to process order. Please try again.');
+        }
+    }
+}
