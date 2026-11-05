@@ -6,6 +6,7 @@
     <title>@yield('title', 'Admin Dashboard - KNOTTED')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://code.iconify.design/iconify-icon/2.0.0/iconify-icon.min.js"></script>
 </head>
 <body class="font-sans antialiased bg-gray-50">
     

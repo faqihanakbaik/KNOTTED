@@ -30,14 +30,13 @@ class RegisterController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'] ?? null,
-            'role' => 'customer',
+            'role' => 'customer', // Default role
         ]);
 
-        // Create cart for user
+        // Create empty cart for user
         Cart::create(['user_id' => $user->id]);
 
-        Auth::login($user);
-
-        return redirect('/')->with('success', 'Registration successful! Welcome to KNOTTED.');
+        // Redirect to login page with success message (per desain.md)
+        return redirect()->route('login')->with('success', 'Registration successful! Please login to continue.');
     }
 }

@@ -11,6 +11,7 @@ class CustomOrder extends Model
 {
     protected $fillable = [
         'user_id',
+        'request_number',
         'request_type', // modify_existing, new_design
         'product_name',
         'category_id',
@@ -86,5 +87,17 @@ class CustomOrder extends Model
     public function isAccepted(): bool
     {
         return $this->status === 'accepted';
+    }
+
+    // Auto-generate request number
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($customOrder) {
+            if (empty($customOrder->request_number)) {
+                $customOrder->request_number = \App\Services\CustomRequestNumberService::generate();
+            }
+        });
     }
 }

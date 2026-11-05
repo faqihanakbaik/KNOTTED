@@ -14,26 +14,40 @@ class Product extends Model
         'category_id',
         'name',
         'slug',
+        'sku',
         'description',
         'price',
-        'stock',
+        'product_type', // ready_stock or made_to_order
+        'lead_time_days',
+        'stock', // Deprecated: will be removed in favor of variations
         'image',
         'images',
         'is_featured',
-        'is_available',
+        'is_active',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'images' => 'array',
         'is_featured' => 'boolean',
-        'is_available' => 'boolean',
+        'is_active' => 'boolean',
+        'lead_time_days' => 'integer',
     ];
 
     // Relationships
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function variations()
+    {
+        return $this->hasMany(ProductVariation::class);
+    }
+
+    public function productImages()
+    {
+        return $this->hasMany(ProductImage::class);
     }
 
     public function cartItems()
@@ -49,7 +63,44 @@ class Product extends Model
     // Helper methods
     public function isInStock()
     {
-        return $this->stock > 0 && $this->is_available;
+        // If product has variations, check if any variation has stock
+        if ($this->variations()->exists()) {
+            return $this->variations()->inStock()->exists();
+        }
+        
+        // Otherwise, check product-level stock (deprecated)
+        return $this->stock > 0 && $this->is_active;
+    }
+
+    public function getTotalStock()
+    {
+        // If product has variations, sum up variation stock
+        if ($this->variations()->exists()) {
+            return $this->variations()->sum('stock_quantity');
+        }
+        
+        // Otherwise, return product-level stock (deprecated)
+        return $this->stock;
+    }
+
+    public function getPrimaryImage()
+    {
+        return $this->productImages()->primary()->first();
+    }
+
+    public function getAllImages()
+    {
+        return $this->productImages()->ordered()->get();
+    }
+
+    public function isMadeToOrder()
+    {
+        return $this->product_type === 'made_to_order';
+    }
+
+    public function isReadyStock()
+    {
+        return $this->product_type === 'ready_stock';
     }
 
     public function scopeFeatured($query)
@@ -59,10 +110,36 @@ class Product extends Model
 
     public function scopeAvailable($query)
     {
-        return $query->where('is_available', true)->where('stock', '>', 0);
+        return $query->where('is_active', true);
     }
 
-    // Auto-generate slug
+    public function scopeInStock($query)
+    {
+        return $query->where('is_active', true)
+            ->where(function($q) {
+                // Products with variations
+                $q->whereHas('variations', function($v) {
+                    $v->where('stock_quantity', '>', 0);
+                })
+                // OR products without variations but with stock
+                ->orWhere(function($q2) {
+                    $q2->whereDoesntHave('variations')
+                       ->where('stock', '>', 0);
+                });
+            });
+    }
+
+    public function scopeMadeToOrder($query)
+    {
+        return $query->where('product_type', 'made_to_order');
+    }
+
+    public function scopeReadyStock($query)
+    {
+        return $query->where('product_type', 'ready_stock');
+    }
+
+    // Auto-generate slug and SKU
     protected static function boot()
     {
         parent::boot();
@@ -70,6 +147,15 @@ class Product extends Model
         static::creating(function ($product) {
             if (empty($product->slug)) {
                 $product->slug = Str::slug($product->name);
+            }
+            
+            if (empty($product->sku)) {
+                // Generate SKU: KNT-CATEGORY-XXXX
+                $categoryCode = $product->category 
+                    ? strtoupper(substr($product->category->slug, 0, 3))
+                    : 'GEN';
+                $random = strtoupper(Str::random(4));
+                $product->sku = "KNT-{$categoryCode}-{$random}";
             }
         });
 

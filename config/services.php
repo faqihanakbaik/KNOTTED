@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+    'supabase' => [
+        'url' => env('SUPABASE_URL'),
+        'anon_key' => env('SUPABASE_ANON_KEY'),
+        'service_key' => env('SUPABASE_SERVICE_KEY'),
+        'storage_url' => env('SUPABASE_URL') . '/storage/v1',
+        'buckets' => [
+            'products' => env('SUPABASE_PRODUCT_BUCKET', 'product-images'),
+            'payments' => env('SUPABASE_PAYMENT_BUCKET', 'payment-proofs'),
+            'custom_orders' => env('SUPABASE_CUSTOM_ORDER_BUCKET', 'custom-order-references'),
+        ],
+    ],
+
 ];

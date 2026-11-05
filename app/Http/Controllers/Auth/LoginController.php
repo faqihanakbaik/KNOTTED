@@ -25,11 +25,15 @@ class LoginController extends Controller
 
             $user = Auth::user();
             
+            // Role-based redirect
             if ($user->isAdmin()) {
-                return redirect()->intended('/admin/dashboard')->with('success', 'Welcome back, Admin!');
+                // Admin always goes to admin dashboard
+                return redirect()->route('admin.dashboard')->with('success', 'Welcome back, Admin!');
             }
 
-            return redirect()->intended('/')->with('success', 'Welcome back!');
+            // Customer: redirect to intended page or home
+            // This allows "add to cart then login" flow to work
+            return redirect()->intended(route('home'))->with('success', 'Welcome back!');
         }
 
         return back()->withErrors([

@@ -21,7 +21,7 @@
             <!-- Product Image -->
             <div class="bg-white rounded-lg overflow-hidden shadow-sm border border-oat">
                 @if($product->image)
-                    <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-auto" onerror="this.src='https://via.placeholder.com/800x800/F5F0E8/342C28?text={{ urlencode($product->name) }}'">
+                    <img src="{{ $product->image }}" alt="{{ $product->name }}" class="w-full h-auto" onerror="this.src='https://via.placeholder.com/800x800/F5F0E8/342C28?text={{ urlencode($product->name) }}'">
                 @else
                     <img src="https://via.placeholder.com/800x800/F5F0E8/342C28?text={{ urlencode($product->name) }}" alt="{{ $product->name }}" class="w-full h-auto">
                 @endif
@@ -119,7 +119,7 @@
                         <div class="product-card">
                             <a href="{{ route('product.show', $related->slug) }}">
                                 @if($related->image)
-                                    <img src="{{ asset('images/products/' . $related->image) }}" alt="{{ $related->name }}" onerror="this.src='https://via.placeholder.com/300x300/F5F0E8/342C28?text={{ urlencode($related->name) }}'">
+                                    <img src="{{ $related->image }}" alt="{{ $related->name }}" onerror="this.src='https://via.placeholder.com/300x300/F5F0E8/342C28?text={{ urlencode($related->name) }}'">
                                 @else
                                     <img src="https://via.placeholder.com/300x300/F5F0E8/342C28?text={{ urlencode($related->name) }}" alt="{{ $related->name }}">
                                 @endif

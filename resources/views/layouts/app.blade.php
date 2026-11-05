@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'KNOTTED - Made by hand, tied with love')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://code.iconify.design/iconify-icon/2.0.0/iconify-icon.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -14,29 +16,12 @@
 </head>
 <body class="font-sans antialiased bg-cream text-espresso">
     
-    <!-- Top Banner -->
+    <!-- Top Banner - Store Announcement -->
     <div class="bg-espresso text-cream py-2.5 px-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <!-- Promo Text (Center on mobile, Left on desktop) -->
-            <div class="flex-1 flex items-center justify-center md:justify-start gap-2 text-sm">
-                <i data-lucide="truck" class="w-4 h-4"></i>
-                <span>Free shipping for orders over Rp 150,000</span>
-            </div>
-            
-            <!-- Social Media Icons (Right) -->
-            <div class="hidden md:flex items-center gap-4">
-                <a href="#" class="hover:text-oat transition" aria-label="Instagram">
-                    <i data-lucide="instagram" class="w-4 h-4"></i>
-                </a>
-                <a href="#" class="hover:text-oat transition" aria-label="TikTok">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                    </svg>
-                </a>
-                <a href="#" class="hover:text-oat transition" aria-label="YouTube">
-                    <i data-lucide="youtube" class="w-4 h-4"></i>
-                </a>
-            </div>
+        <div class="max-w-7xl mx-auto">
+            <p class="text-center text-sm">
+                <span class="font-semibold">Handcrafted with Love</span> • Made to order headwear • Est. 3-5 working days
+            </p>
         </div>
     </div>
 
@@ -80,29 +65,35 @@
                     </button>
 
                     @auth
-                        @if(auth()->user()->isAdmin())
-                            <a href="{{ route('admin.dashboard') }}" class="btn-secondary text-sm px-3 py-1.5">Admin</a>
-                        @else
-                            <!-- Cart -->
+                        <!-- Cart (Only for customers) -->
+                        @if(!auth()->user()->isAdmin())
                             <a href="{{ route('cart.index') }}" class="relative text-espresso hover:text-mocha transition">
                                 <i data-lucide="shopping-bag" class="w-5 h-5"></i>
                                 @if(auth()->user()->cart && auth()->user()->cart->items->count() > 0)
-                                    <span class="cart-count absolute -top-2 -right-2 bg-espresso text-cream text-xs rounded-full h-4 w-4 flex items-center justify-center font-semibold text-[10px]">
+                                    <span class="absolute -top-2 -right-2 bg-espresso text-cream text-xs rounded-full h-4 w-4 flex items-center justify-center font-semibold text-[10px]">
                                         {{ auth()->user()->cart->getTotalItems() }}
                                     </span>
                                 @endif
                             </a>
-                            
-                            <!-- User Dropdown -->
-                            <div class="relative group">
-                                <button class="text-espresso hover:text-mocha transition">
-                                    <i data-lucide="user" class="w-5 h-5"></i>
-                                </button>
-                                <div class="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                                    <div class="px-4 py-2 border-b border-gray-100">
-                                        <p class="text-sm font-semibold text-espresso">{{ auth()->user()->name }}</p>
-                                        <p class="text-xs text-mocha">{{ auth()->user()->email }}</p>
-                                    </div>
+                        @endif
+                        
+                        <!-- User Dropdown -->
+                        <div class="relative group">
+                            <button class="text-espresso hover:text-mocha transition">
+                                <i data-lucide="user" class="w-5 h-5"></i>
+                            </button>
+                            <div class="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                <div class="px-4 py-2 border-b border-gray-100">
+                                    <p class="text-sm font-semibold text-espresso">{{ auth()->user()->name }}</p>
+                                    <p class="text-xs text-mocha">{{ auth()->user()->email }}</p>
+                                </div>
+                                
+                                @if(auth()->user()->isAdmin())
+                                    <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-2 px-4 py-2 text-sm text-espresso hover:bg-cream">
+                                        <i data-lucide="shield" class="w-4 h-4"></i>
+                                        <span>Admin Dashboard</span>
+                                    </a>
+                                @else
                                     <a href="{{ route('customer.dashboard') }}" class="flex items-center space-x-2 px-4 py-2 text-sm text-espresso hover:bg-cream">
                                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                                         <span>Dashboard</span>
@@ -123,17 +114,18 @@
                                         <i data-lucide="user-circle" class="w-4 h-4"></i>
                                         <span>Profile</span>
                                     </a>
-                                    <div class="border-t border-gray-100 my-1"></div>
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="w-full flex items-center space-x-2 text-left px-4 py-2 text-sm text-espresso hover:bg-cream">
-                                            <i data-lucide="log-out" class="w-4 h-4"></i>
-                                            <span>Logout</span>
-                                        </button>
-                                    </form>
-                                </div>
+                                @endif
+                                
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="w-full flex items-center space-x-2 text-left px-4 py-2 text-sm text-espresso hover:bg-cream">
+                                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                                        <span>Logout</span>
+                                    </button>
+                                </form>
                             </div>
-                        @endif
+                        </div>
                     @else
                         <a href="{{ route('login') }}" class="text-sm text-espresso hover:text-mocha transition font-medium">Login</a>
                         <a href="{{ route('register') }}" class="btn-primary text-sm px-4 py-1.5">Register</a>
@@ -261,6 +253,37 @@
                 }, 500);
             });
         }, 5000);
+
+        // Handle 419 CSRF errors on logout forms
+        document.querySelectorAll('form[action*="logout"]').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || document.querySelector('input[name="_token"]')?.value,
+                        'Accept': 'application/json',
+                    },
+                    body: new FormData(form)
+                })
+                .then(response => {
+                    if (response.status === 419) {
+                        // CSRF expired, use GET fallback
+                        window.location.href = '/logout';
+                    } else {
+                        // Success, redirect to home
+                        window.location.href = '/';
+                    }
+                })
+                .catch(error => {
+                    // Any error, just use GET fallback
+                    window.location.href = '/logout';
+                });
+            });
+        });
     </script>
+    
+    @stack('scripts')
 </body>
 </html>

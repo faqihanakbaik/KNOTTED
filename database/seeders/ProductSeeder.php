@@ -30,7 +30,7 @@ class ProductSeeder extends Seeder
             'stock' => 10,
             'image' => 'bunny-amigurumi.jpg',
             'is_featured' => true,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         Product::create([
@@ -42,7 +42,7 @@ class ProductSeeder extends Seeder
             'stock' => 8,
             'image' => 'bear-amigurumi.jpg',
             'is_featured' => true,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         Product::create([
@@ -54,7 +54,7 @@ class ProductSeeder extends Seeder
             'stock' => 12,
             'image' => 'frog-amigurumi.jpg',
             'is_featured' => false,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         Product::create([
@@ -66,7 +66,7 @@ class ProductSeeder extends Seeder
             'stock' => 6,
             'image' => 'cat-amigurumi.jpg',
             'is_featured' => false,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         // Flowers Products
@@ -79,7 +79,7 @@ class ProductSeeder extends Seeder
             'stock' => 15,
             'image' => 'tulip-bouquet.jpg',
             'is_featured' => true,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         Product::create([
@@ -91,7 +91,7 @@ class ProductSeeder extends Seeder
             'stock' => 20,
             'image' => 'sunflower-crochet.jpg',
             'is_featured' => true,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         Product::create([
@@ -103,7 +103,7 @@ class ProductSeeder extends Seeder
             'stock' => 10,
             'image' => 'rose-bouquet.jpg',
             'is_featured' => false,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         // Keychains Products
@@ -116,7 +116,7 @@ class ProductSeeder extends Seeder
             'stock' => 30,
             'image' => 'mini-bear-keychain.jpg',
             'is_featured' => false,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         Product::create([
@@ -128,7 +128,7 @@ class ProductSeeder extends Seeder
             'stock' => 35,
             'image' => 'flower-keychain.jpg',
             'is_featured' => false,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         Product::create([
@@ -140,7 +140,7 @@ class ProductSeeder extends Seeder
             'stock' => 40,
             'image' => 'heart-keychain.jpg',
             'is_featured' => false,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         // Bags Products
@@ -153,7 +153,7 @@ class ProductSeeder extends Seeder
             'stock' => 5,
             'image' => 'tote-bag-classic.jpg',
             'is_featured' => true,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         Product::create([
@@ -165,7 +165,7 @@ class ProductSeeder extends Seeder
             'stock' => 7,
             'image' => 'mini-bucket-bag.jpg',
             'is_featured' => false,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         Product::create([
@@ -177,7 +177,7 @@ class ProductSeeder extends Seeder
             'stock' => 6,
             'image' => 'crossbody-bag.jpg',
             'is_featured' => false,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         // Accessories Products
@@ -190,7 +190,7 @@ class ProductSeeder extends Seeder
             'stock' => 25,
             'image' => 'hair-scrunchie-set.jpg',
             'is_featured' => false,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         Product::create([
@@ -202,7 +202,7 @@ class ProductSeeder extends Seeder
             'stock' => 18,
             'image' => 'coaster-set.jpg',
             'is_featured' => false,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         Product::create([
@@ -214,7 +214,7 @@ class ProductSeeder extends Seeder
             'stock' => 12,
             'image' => 'phone-pouch.jpg',
             'is_featured' => false,
-            'is_available' => true,
+            'is_active' => true,
         ]);
 
         Product::create([
@@ -226,7 +226,7 @@ class ProductSeeder extends Seeder
             'stock' => 20,
             'image' => 'headband-set.jpg',
             'is_featured' => false,
-            'is_available' => true,
+            'is_active' => true,
         ]);
     }
 }

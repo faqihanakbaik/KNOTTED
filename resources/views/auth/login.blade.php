@@ -9,7 +9,11 @@
             <!-- Logo & Header -->
             <div class="text-center mb-8">
                 <h1 class="font-serif text-3xl font-bold text-espresso mb-2">Welcome Back</h1>
-                <p class="text-mocha">Login to your KNOTTED account</p>
+                @if(request()->has('redirect'))
+                    <p class="text-mocha">Please login to continue</p>
+                @else
+                    <p class="text-mocha">Login to your KNOTTED account</p>
+                @endif
             </div>
 
             @if($errors->any())
@@ -62,6 +66,14 @@
                         Create one now
                     </a>
                 </p>
+            </div>
+
+            <!-- Continue Shopping Link -->
+            <div class="mt-4 text-center">
+                <a href="{{ route('home') }}" class="text-sm text-sage hover:text-mocha transition inline-flex items-center gap-1">
+                    <i data-lucide="arrow-left" class="w-3 h-3"></i>
+                    Continue browsing
+                </a>
             </div>
 
             <!-- Demo Credentials

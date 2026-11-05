@@ -3,73 +3,125 @@
 @section('title', 'KNOTTED - Made by hand, tied with love')
 
 @section('content')
-<!-- Hero Section with Image -->
-<section class="relative bg-gradient-to-br from-[#FFE5EC] via-white to-[#FFF0F5] py-16 md:py-20 flex items-center overflow-hidden">
+<!-- Hero Section with Product Carousel -->
+<section class="relative bg-gradient-to-br from-[#F5F0E8] via-white to-[#FFFFFF] py-16 md:py-20 flex items-center overflow-hidden">
     <!-- Decorative Elements -->
-    <div class="absolute top-10 right-10 w-32 h-32 bg-[#FFB6D9]/10 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-10 left-10 w-40 h-40 bg-[#FFC9E0]/10 rounded-full blur-3xl"></div>
+    <div class="absolute top-10 right-10 w-32 h-32 bg-[#DCCBBC]/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-10 left-10 w-40 h-40 bg-[#F5F0E8]/10 rounded-full blur-3xl"></div>
     
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <!-- Left: Text Content -->
             <div class="space-y-6 lg:space-y-7" data-aos="fade-right">
                 <div class="inline-block">
-                    <p class="text-xs uppercase tracking-widest text-[#D84797] font-bold border-l-4 border-[#FFB6D9] pl-3 bg-[#FFE5EC]/50 py-2 pr-4 rounded-r-full">✨ HANDMADE CROCHET SHOP</p>
+                    <p class="text-xs uppercase tracking-widest text-[#947765] font-bold border-l-4 border-[#DCCBBC] pl-3 bg-[#F5F0E8]/50 py-2 pr-4 rounded-r-full">
+                        <iconify-icon icon="solar:star-bold" class="inline-block w-3 h-3"></iconify-icon> HANDMADE CROCHET SHOP
+                    </p>
                 </div>
                 
-                <h1 class="font-serif text-5xl lg:text-6xl xl:text-7xl font-bold text-[#D84797] leading-tight">
+                <h1 class="font-serif text-5xl lg:text-6xl xl:text-7xl font-bold text-[#947765] leading-tight">
                     Made by hand,<br>
-                    <span class="inline-flex items-center gap-3 bg-gradient-to-r from-[#FFB6D9] to-[#FFC9E0] bg-clip-text text-transparent">
+                    <span class="inline-flex items-center gap-3 bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] bg-clip-text text-transparent">
                         tied with love.
-                        <svg class="w-10 h-10 lg:w-12 lg:h-12 text-[#FFB6D9]" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="w-10 h-10 lg:w-12 lg:h-12 text-[#DCCBBC]" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M25 45C20 35 5 30 5 20C5 10 15 5 25 15C35 5 45 10 45 20C45 30 30 35 25 45Z" stroke="currentColor" stroke-width="2" fill="currentColor" opacity="0.3"/>
                         </svg>
                     </span>
                 </h1>
                 
-                <p class="text-lg text-[#D84797]/80 leading-relaxed max-w-xl">
-                    Discover unique handmade crochet creations that bring warmth, beauty, and charm to your life ✨
+                <p class="text-lg text-[#947765]/80 leading-relaxed max-w-xl">
+                    Discover unique handmade crochet creations that bring warmth, beauty, and charm to your life 
+                    <iconify-icon icon="solar:star-bold" class="inline-block w-4 h-4"></iconify-icon>
                 </p>
                 
                 <div class="flex flex-wrap gap-4 pt-3">
-                    <a href="{{ route('shop.index') }}" class="bg-gradient-to-r from-[#FFB6D9] to-[#FFC9E0] hover:from-[#FFC9E0] hover:to-[#FFB6D9] text-white font-semibold px-8 py-4 rounded-full inline-flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    <a href="{{ route('shop.index') }}" class="bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] hover:from-[#F5F0E8] hover:to-[#DCCBBC] text-white font-semibold px-8 py-4 rounded-full inline-flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                         Shop Collection
                         <i data-lucide="arrow-right" class="w-5 h-5"></i>
                     </a>
-                    <a href="{{ route('about') }}" class="bg-white border-2 border-[#FFB6D9] text-[#D84797] hover:bg-[#FFE5EC] font-semibold px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 shadow-md">
+                    <a href="{{ route('about') }}" class="bg-white border-2 border-[#DCCBBC] text-[#947765] hover:bg-[#F5F0E8] font-semibold px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 shadow-md">
                         Our Story
                     </a>
                 </div>
                 
-                <!-- Carousel Dots -->
-                <div class="flex gap-3 pt-3">
-                    <button class="w-10 h-2.5 rounded-full bg-gradient-to-r from-[#FFB6D9] to-[#FFC9E0] shadow-sm"></button>
-                    <button class="w-2.5 h-2.5 rounded-full bg-[#FFB6D9]/30 hover:bg-[#FFB6D9]/60 transition"></button>
-                    <button class="w-2.5 h-2.5 rounded-full bg-[#FFB6D9]/30 hover:bg-[#FFB6D9]/60 transition"></button>
+                <!-- Carousel Navigation -->
+                <div class="flex items-center gap-4 pt-3">
+                    <button onclick="prevSlide()" class="w-10 h-10 rounded-full bg-white border-2 border-[#DCCBBC] text-[#947765] hover:bg-[#F5F0E8] transition flex items-center justify-center">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    
+                    <!-- Dots -->
+                    <div id="carousel-dots" class="flex gap-2">
+                        <!-- Dots will be generated by JavaScript -->
+                    </div>
+                    
+                    <button onclick="nextSlide()" class="w-10 h-10 rounded-full bg-white border-2 border-[#DCCBBC] text-[#947765] hover:bg-[#F5F0E8] transition flex items-center justify-center">
+                        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
                 </div>
             </div>
             
-            <!-- Right: Product Image -->
+            <!-- Right: Product Carousel -->
             <div class="relative hidden lg:block" data-aos="fade-left">
-                <div class="relative bg-gradient-to-br from-white to-[#FFE5EC] backdrop-blur-sm rounded-3xl p-8 border-2 border-[#FFB6D9]/30 shadow-2xl hover:shadow-[#FFB6D9]/20 transition-all duration-500 hover:scale-105">
-                    <img src="https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=600&h=600&fit=crop" 
-                         alt="Handmade Crochet Products" 
-                         class="rounded-2xl w-full object-cover shadow-lg"
-                         onerror="this.src='https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=600&h=600&fit=crop'">
-                    <div class="absolute -bottom-5 -right-5 bg-gradient-to-br from-[#FFB6D9] to-[#FFC9E0] text-white px-6 py-3 rounded-2xl shadow-xl border-4 border-white">
+                <div id="hero-carousel" class="relative bg-gradient-to-br from-white to-[#F5F0E8] backdrop-blur-sm rounded-3xl p-8 border-2 border-[#DCCBBC]/30 shadow-2xl overflow-hidden">
+                    <!-- Carousel Container -->
+                    <div class="carousel-wrapper relative w-full h-[500px]">
+                        @php
+                            // Get 5 featured products for carousel
+                            $carouselProducts = collect($featuredProducts ?? [])->take(5);
+                        @endphp
+                        
+                        @forelse($carouselProducts as $index => $product)
+                            <div class="carousel-slide absolute inset-0 transition-all duration-700 ease-in-out {{ $index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0' }}" data-slide="{{ $index }}">
+                                <a href="{{ route('product.show', $product->slug) }}" class="block h-full">
+                                    <img src="{{ $product->image }}" 
+                                         alt="{{ $product->name }}" 
+                                         class="rounded-2xl w-full h-full object-cover shadow-lg hover:scale-105 transition-transform duration-500"
+                                         onerror="this.src='https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=600&h=600&fit=crop'">
+                                </a>
+                                
+                                <!-- Product Info Overlay -->
+                                <div class="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl">
+                                    <h3 class="font-serif font-bold text-lg text-[#947765] mb-1">{{ $product->name }}</h3>
+                                    <p class="text-2xl font-bold bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] bg-clip-text text-transparent">
+                                        Rp {{ number_format($product->price, 0, ',', '.') }}
+                                    </p>
+                                    <a href="{{ route('product.show', $product->slug) }}" class="inline-flex items-center gap-1 text-xs text-[#947765] hover:text-[#DCCBBC] transition mt-2">
+                                        View Product
+                                        <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        @empty
+                            <!-- Fallback if no products -->
+                            <div class="carousel-slide absolute inset-0 opacity-100 z-10" data-slide="0">
+                                <img src="https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=600&h=600&fit=crop" 
+                                     alt="Handmade Crochet Products" 
+                                     class="rounded-2xl w-full h-full object-cover shadow-lg">
+                                <div class="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl">
+                                    <h3 class="font-serif font-bold text-lg text-[#947765] mb-1">Handmade with Love</h3>
+                                    <p class="text-sm text-[#947765]/70">Explore our beautiful collection</p>
+                                </div>
+                            </div>
+                        @endforelse
+                    </div>
+                    
+                    <!-- Brand Badge -->
+                    <div class="absolute -bottom-5 -right-5 bg-gradient-to-br from-[#DCCBBC] to-[#F5F0E8] text-white px-6 py-3 rounded-2xl shadow-xl border-4 border-white z-20">
                         <p class="text-xs font-medium mb-0.5">crafted by</p>
                         <p class="font-serif font-bold text-xl">KNOTTED</p>
                     </div>
                 </div>
+                
                 <!-- Decorative elements -->
-                <div class="absolute -top-6 -right-6 w-24 h-24">
-                    <svg viewBox="0 0 100 100" fill="none" class="text-[#FFB6D9] animate-pulse">
+                <div class="absolute -top-6 -right-6 w-24 h-24 animate-pulse">
+                    <svg viewBox="0 0 100 100" fill="none" class="text-[#DCCBBC]">
                         <circle cx="50" cy="50" r="45" fill="currentColor" opacity="0.2"/>
                         <path d="M20,50 Q30,30 50,20 T80,50 T50,80 T20,50" fill="none" stroke="currentColor" stroke-width="3" opacity="0.4"/>
                     </svg>
                 </div>
                 <div class="absolute -bottom-8 -left-8 w-20 h-20">
-                    <svg viewBox="0 0 100 100" fill="currentColor" class="text-[#FFC9E0] opacity-30">
+                    <svg viewBox="0 0 100 100" fill="currentColor" class="text-[#F5F0E8] opacity-30">
                         <circle cx="50" cy="50" r="40"/>
                     </svg>
                 </div>
@@ -130,16 +182,16 @@
 </section>
 
 <!-- Featured Products -->
-<section class="py-16 bg-gradient-to-br from-[#FFE5EC] via-white to-[#FFF0F5]">
+<section class="py-16 bg-gradient-to-br from-[#F5F0E8] via-white to-[#FFFFFF]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Section Header -->
         <div class="flex items-end justify-between mb-10" data-aos="fade-up">
             <div>
-                <p class="text-xs uppercase tracking-wider text-[#D84797] font-semibold mb-2 border-l-4 border-[#FFB6D9] pl-3">HANDPICKED FOR YOU</p>
-                <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#D84797] mb-2">Best Sellers ✨</h2>
-                <p class="text-[#D84797]/70 text-base mt-1">Crafted with love, cherished by many</p>
+                <p class="text-xs uppercase tracking-wider text-[#947765] font-semibold mb-2 border-l-4 border-[#DCCBBC] pl-3">HANDPICKED FOR YOU</p>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#947765] mb-2">Best Sellers <iconify-icon icon="solar:star-bold" class="inline-block w-8 h-8"></iconify-icon></h2>
+                <p class="text-[#947765]/70 text-base mt-1">Crafted with love, cherished by many</p>
             </div>
-            <a href="{{ route('shop.index') }}" class="hidden md:inline-flex items-center gap-2 text-white bg-gradient-to-r from-[#FFB6D9] to-[#FFC9E0] hover:from-[#FFC9E0] hover:to-[#FFB6D9] px-6 py-3 rounded-full font-semibold text-sm shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105">
+            <a href="{{ route('shop.index') }}" class="hidden md:inline-flex items-center gap-2 text-white bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] hover:from-[#F5F0E8] hover:to-[#DCCBBC] px-6 py-3 rounded-full font-semibold text-sm shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105">
                 View All Products
                 <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </a>
@@ -152,12 +204,12 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @forelse($allProducts as $product)
-                <div class="group product-card bg-white rounded-3xl overflow-hidden border-2 border-[#FFE5EC] hover:border-[#FFB6D9] hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
+                <div class="group product-card bg-white rounded-3xl overflow-hidden border-2 border-[#F5F0E8] hover:border-[#DCCBBC] hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
                     <!-- Image Container -->
-                    <div class="relative overflow-hidden bg-gradient-to-br from-[#FFF0F5] to-[#FFE5EC]">
+                    <div class="relative overflow-hidden bg-gradient-to-br from-[#FFFFFF] to-[#F5F0E8]">
                         <a href="{{ route('product.show', $product->slug) }}">
                             @if($product->image)
-                                <img src="{{ asset('images/products/' . $product->image) }}" 
+                                <img src="{{ $product->image }}" 
                                      alt="{{ $product->name }}" 
                                      class="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-700"
                                      onerror="this.src='https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=400&h=400&fit=crop'">
@@ -169,28 +221,28 @@
                         </a>
                         
                         <!-- Wishlist Button -->
-                        <button class="absolute top-4 right-4 w-11 h-11 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-gradient-to-br hover:from-[#FFB6D9] hover:to-[#FFC9E0] transition-all shadow-lg group-hover:scale-110 hover:shadow-xl">
-                            <i data-lucide="heart" class="w-5 h-5 text-[#D84797] hover:text-white transition-colors"></i>
+                        <button class="absolute top-4 right-4 w-11 h-11 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-gradient-to-br hover:from-[#DCCBBC] hover:to-[#F5F0E8] transition-all shadow-lg group-hover:scale-110 hover:shadow-xl">
+                            <i data-lucide="heart" class="w-5 h-5 text-[#947765] hover:text-white transition-colors"></i>
                         </button>
                         
                         <!-- NEW badge for first 2 products -->
                         @if($loop->index < 2)
-                            <div class="absolute top-4 left-4 bg-gradient-to-r from-[#FFB6D9] to-[#FFC9E0] text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
-                                ✨ NEW
+                            <div class="absolute top-4 left-4 bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                                <iconify-icon icon="solar:star-bold" class="inline-block w-3 h-3"></iconify-icon> NEW
                             </div>
                         @endif
                     </div>
                     
                     <!-- Product Info -->
                     <div class="p-6">
-                        <h3 class="font-serif text-lg font-bold text-[#D84797] mb-3 group-hover:text-[#FFB6D9] transition line-clamp-2 min-h-[3.5rem]">
+                        <h3 class="font-serif text-lg font-bold text-[#947765] mb-3 group-hover:text-[#DCCBBC] transition line-clamp-2 min-h-[3.5rem]">
                             <a href="{{ route('product.show', $product->slug) }}">
                                 {{ $product->name }}
                             </a>
                         </h3>
                         
                         <div class="flex items-center justify-between mb-3">
-                            <p class="text-[#D84797] text-2xl font-bold">
+                            <p class="text-[#947765] text-2xl font-bold">
                                 Rp {{ number_format($product->price, 0, ',', '.') }}
                             </p>
                         </div>
@@ -200,12 +252,12 @@
                             <div class="flex items-center gap-1">
                                 @for($i = 0; $i < 5; $i++)
                                     @if($i < 4)
-                                        <i data-lucide="star" class="w-4 h-4 fill-[#FFB6D9] text-[#FFB6D9]"></i>
+                                        <i data-lucide="star" class="w-4 h-4 fill-[#DCCBBC] text-[#DCCBBC]"></i>
                                     @else
                                         <i data-lucide="star" class="w-4 h-4 text-gray-300"></i>
                                     @endif
                                 @endfor
-                                <span class="text-[#D84797]/70 ml-1 font-medium">({{ rand(50, 999) }})</span>
+                                <span class="text-[#947765]/70 ml-1 font-medium">({{ rand(50, 999) }})</span>
                             </div>
                             @if($product->isInStock())
                                 <span class="bg-gradient-to-r from-green-100 to-green-50 text-green-700 px-3 py-1 rounded-full font-semibold text-xs">In Stock</span>
@@ -215,7 +267,7 @@
                         </div>
                         
                         <!-- Add to Cart Button -->
-                        <button class="w-full bg-gradient-to-r from-[#FFB6D9] to-[#FFC9E0] hover:from-[#FFC9E0] hover:to-[#FFB6D9] text-white font-semibold py-3 rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center justify-center gap-2">
+                        <button class="w-full bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] hover:from-[#F5F0E8] hover:to-[#DCCBBC] text-white font-semibold py-3 rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center justify-center gap-2">
                             <i data-lucide="shopping-cart" class="w-4 h-4"></i>
                             Add to Cart
                         </button>
@@ -230,7 +282,7 @@
 
         <!-- Mobile View All Button -->
         <div class="text-center mt-12 md:hidden" data-aos="fade-up">
-            <a href="{{ route('shop.index') }}" class="bg-gradient-to-r from-[#FFB6D9] to-[#FFC9E0] hover:from-[#FFC9E0] hover:to-[#FFB6D9] text-white font-semibold px-10 py-4 rounded-full inline-flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <a href="{{ route('shop.index') }}" class="bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] hover:from-[#F5F0E8] hover:to-[#DCCBBC] text-white font-semibold px-10 py-4 rounded-full inline-flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                 View All Products
                 <i data-lucide="arrow-right" class="w-5 h-5"></i>
             </a>
@@ -361,7 +413,7 @@
 
             <!-- Feature 3 -->
             <div class="feature-item">
-                <span class="feature-emoji" aria-hidden="true">✨</span>
+                <iconify-icon icon="solar:star-bold" class="text-mocha" style="font-size: 3rem;"></iconify-icon>
                 <h3 class="font-serif text-2xl font-bold text-espresso mb-3">
                     Unique Designs
                 </h3>
@@ -376,7 +428,7 @@
 <!-- Brand Story -->
 <section class="py-20 bg-gradient-to-br from-sage/20 to-oat/20">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <span class="emoji-decor" aria-hidden="true">🏠</span>
+        <iconify-icon icon="solar:home-2-bold" class="text-mocha" style="font-size: 3rem; display: block; margin: 0 auto 1rem;"></iconify-icon>
         <h2 class="section-title">Our Story</h2>
         <p class="text-lg text-espresso leading-relaxed max-w-3xl mx-auto">
             At KNOTTED, every stitch tells a story. We believe in the beauty of handmade craftsmanship 
@@ -450,3 +502,93 @@
     </div>
 </section>
 @endsection
+
+@push('scripts')
+<script>
+    // Hero Carousel
+    let currentSlide = 0;
+    let autoSlideInterval;
+    const slides = document.querySelectorAll('.carousel-slide');
+    const totalSlides = slides.length;
+    
+    // Generate dots
+    function generateDots() {
+        const dotsContainer = document.getElementById('carousel-dots');
+        if (!dotsContainer) return;
+        
+        dotsContainer.innerHTML = '';
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('button');
+            dot.className = `w-2.5 h-2.5 rounded-full transition ${i === 0 ? 'w-10 bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8]' : 'bg-[#DCCBBC]/30 hover:bg-[#DCCBBC]/60'}`;
+            dot.onclick = () => goToSlide(i);
+            dotsContainer.appendChild(dot);
+        }
+    }
+    
+    function updateSlides() {
+        slides.forEach((slide, index) => {
+            if (index === currentSlide) {
+                slide.classList.remove('opacity-0', 'z-0');
+                slide.classList.add('opacity-100', 'z-10');
+            } else {
+                slide.classList.remove('opacity-100', 'z-10');
+                slide.classList.add('opacity-0', 'z-0');
+            }
+        });
+        
+        // Update dots
+        const dots = document.querySelectorAll('#carousel-dots button');
+        dots.forEach((dot, index) => {
+            if (index === currentSlide) {
+                dot.className = 'w-10 h-2.5 rounded-full bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] transition';
+            } else {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-[#DCCBBC]/30 hover:bg-[#DCCBBC]/60 transition';
+            }
+        });
+        
+        // Reinitialize Lucide icons for the new slide
+        lucide.createIcons();
+    }
+    
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateSlides();
+        resetAutoSlide();
+    }
+    
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        updateSlides();
+        resetAutoSlide();
+    }
+    
+    function goToSlide(index) {
+        currentSlide = index;
+        updateSlides();
+        resetAutoSlide();
+    }
+    
+    function startAutoSlide() {
+        autoSlideInterval = setInterval(nextSlide, 4000); // Change slide every 4 seconds
+    }
+    
+    function resetAutoSlide() {
+        clearInterval(autoSlideInterval);
+        startAutoSlide();
+    }
+    
+    // Initialize
+    if (totalSlides > 0) {
+        generateDots();
+        updateSlides();
+        startAutoSlide();
+        
+        // Pause auto-slide on hover
+        const carousel = document.getElementById('hero-carousel');
+        if (carousel) {
+            carousel.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
+            carousel.addEventListener('mouseleave', startAutoSlide);
+        }
+    }
+</script>
+@endpush

@@ -45,6 +45,8 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
+// GET fallback for expired CSRF tokens
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout.get')->middleware('auth');
 
 // Customer Routes (Requires Authentication)
 Route::middleware(['auth', 'customer'])->group(function () {

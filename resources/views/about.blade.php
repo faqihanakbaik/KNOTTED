@@ -43,17 +43,17 @@
         <h2 class="font-serif text-3xl font-bold text-espresso text-center mb-12">Our Values</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="feature-item bg-white rounded-lg p-8 border border-oat">
-                <span class="feature-emoji" aria-hidden="true">🤲</span>
+                <iconify-icon icon="solar:hand-heart-bold" class="text-mocha" style="font-size: 3rem;"></iconify-icon>
                 <h3 class="font-serif text-xl font-bold text-espresso mb-3">Handmade with Love</h3>
                 <p class="text-mocha">Every piece is crafted by hand with care and attention to detail</p>
             </div>
             <div class="feature-item bg-white rounded-lg p-8 border border-oat">
-                <span class="feature-emoji" aria-hidden="true">🌱</span>
+                <iconify-icon icon="solar:leaf-bold" class="text-mocha" style="font-size: 3rem;"></iconify-icon>
                 <h3 class="font-serif text-xl font-bold text-espresso mb-3">Sustainable Choice</h3>
                 <p class="text-mocha">Supporting slow fashion and eco-friendly alternatives to fast fashion</p>
             </div>
             <div class="feature-item bg-white rounded-lg p-8 border border-oat">
-                <span class="feature-emoji" aria-hidden="true">✨</span>
+                <iconify-icon icon="solar:star-bold" class="text-mocha" style="font-size: 3rem;"></iconify-icon>
                 <h3 class="font-serif text-xl font-bold text-espresso mb-3">Unique & Special</h3>
                 <p class="text-mocha">Each piece is one-of-a-kind, making your purchase truly special</p>
             </div>

@@ -1,370 +1,219 @@
 @extends('layouts.admin')
 
-@section('title', 'Custom Order Detail')
+@section('page-title', 'Custom Order Details')
 
 @section('content')
-<div class="p-6 max-w-6xl">
-    <div class="mb-6">
-        <a href="{{ route('admin.custom-orders.index') }}" class="inline-flex items-center text-mocha hover:text-espresso mb-4">
-            <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
-            Back to Custom Orders
-        </a>
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-serif text-espresso mb-1">{{ $customOrder->product_name }}</h1>
-                <p class="text-mocha">Requested by {{ $customOrder->user->name }} on {{ $customOrder->created_at->format('M d, Y') }}</p>
-            </div>
-            <span class="px-4 py-2 rounded-full text-sm font-medium
-                @if($customOrder->status === 'pending') bg-gray-100 text-gray-800
-                @elseif($customOrder->status === 'quoted') bg-blue-100 text-blue-800
-                @elseif($customOrder->status === 'negotiating') bg-yellow-100 text-yellow-800
-                @elseif($customOrder->status === 'accepted') bg-green-100 text-green-800
-                @elseif($customOrder->status === 'rejected') bg-red-100 text-red-800
-                @elseif($customOrder->status === 'cancelled') bg-gray-100 text-gray-600
-                @elseif($customOrder->status === 'converted') bg-purple-100 text-purple-800
-                @endif">
-                {{ ucfirst($customOrder->status) }}
-            </span>
-        </div>
-    </div>
+<div class="mb-6">
+    <a href="{{ route('admin.custom-orders.index') }}" class="text-gray-600 hover:text-espresso">
+        ← Back to Custom Orders
+    </a>
+</div>
 
-    @if(session('success'))
-    <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6">
-        {{ session('success') }}
-    </div>
-    @endif
-
-    @if(session('error'))
-    <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
-        {{ session('error') }}
-    </div>
-    @endif
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Main Content -->
-        <div class="lg:col-span-2 space-y-6">
-            <!-- Customer Info -->
-            <div class="bg-white rounded-lg border border-oat p-6">
-                <h2 class="text-lg font-serif text-espresso mb-4">Customer Information</h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-mocha mb-1">Name</p>
-                        <p class="text-espresso font-medium">{{ $customOrder->user->name }}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-mocha mb-1">Email</p>
-                        <p class="text-espresso">{{ $customOrder->user->email }}</p>
-                    </div>
-                    @if($customOrder->user->phone)
-                    <div>
-                        <p class="text-sm text-mocha mb-1">Phone</p>
-                        <p class="text-espresso">{{ $customOrder->user->phone }}</p>
-                    </div>
-                    @endif
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-6">
+        <!-- Request Details -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-xl font-bold text-espresso mb-4">Request Details</h3>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <p class="text-sm text-gray-500">Product Name</p>
+                    <p class="font-semibold">{{ $customOrder->product_name }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Category</p>
+                    <p class="font-semibold">{{ $customOrder->category->name }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Quantity</p>
+                    <p class="font-semibold">{{ $customOrder->quantity }} pcs</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Customer Budget</p>
+                    <p class="font-semibold">Rp {{ number_format($customOrder->customer_budget, 0, ',', '.') }}</p>
                 </div>
             </div>
 
-            <!-- Request Details -->
-            <div class="bg-white rounded-lg border border-oat p-6">
-                <h2 class="text-lg font-serif text-espresso mb-4">Request Details</h2>
-                
-                <div class="space-y-4">
-                    <div>
-                        <h3 class="text-sm font-medium text-mocha mb-1">Request Type</h3>
-                        <p class="text-espresso">
-                            @if($customOrder->request_type === 'modify_existing')
-                                <i data-lucide="edit-3" class="w-4 h-4 inline mr-1"></i>
-                                Modify Existing Product
-                            @else
-                                <i data-lucide="sparkles" class="w-4 h-4 inline mr-1"></i>
-                                New Custom Design
-                            @endif
-                        </p>
-                    </div>
-
-                    @if($customOrder->category)
-                    <div>
-                        <h3 class="text-sm font-medium text-mocha mb-1">Category</h3>
-                        <p class="text-espresso">{{ $customOrder->category->name }}</p>
-                    </div>
-                    @endif
-
-                    <div>
-                        <h3 class="text-sm font-medium text-mocha mb-1">Description</h3>
-                        <p class="text-espresso whitespace-pre-line">{{ $customOrder->description }}</p>
-                    </div>
-
-                    <div class="grid grid-cols-3 gap-4">
-                        @if($customOrder->color)
-                        <div>
-                            <h3 class="text-sm font-medium text-mocha mb-1">Color</h3>
-                            <p class="text-espresso">{{ $customOrder->color }}</p>
-                        </div>
-                        @endif
-
-                        @if($customOrder->size)
-                        <div>
-                            <h3 class="text-sm font-medium text-mocha mb-1">Size</h3>
-                            <p class="text-espresso">{{ $customOrder->size }}</p>
-                        </div>
-                        @endif
-
-                        <div>
-                            <h3 class="text-sm font-medium text-mocha mb-1">Quantity</h3>
-                            <p class="text-espresso">{{ $customOrder->quantity }}</p>
-                        </div>
-                    </div>
-
-                    @if($customOrder->notes)
-                    <div>
-                        <h3 class="text-sm font-medium text-mocha mb-1">Additional Notes</h3>
-                        <p class="text-espresso whitespace-pre-line">{{ $customOrder->notes }}</p>
-                    </div>
-                    @endif
-                </div>
+            <div class="mb-6">
+                <p class="text-sm text-gray-500 mb-2">Description</p>
+                <p class="text-gray-700">{{ $customOrder->description }}</p>
             </div>
 
-            <!-- Reference Images -->
             @if($customOrder->images->count() > 0)
-            <div class="bg-white rounded-lg border border-oat p-6">
-                <h2 class="text-lg font-serif text-espresso mb-4">Reference Images</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+                <p class="text-sm text-gray-500 mb-2">Reference Images</p>
+                <div class="grid grid-cols-3 gap-3">
                     @foreach($customOrder->images as $image)
-                    <a href="{{ asset('storage/' . $image->image_path) }}" target="_blank" class="group">
-                        <img src="{{ asset('storage/' . $image->image_path) }}" 
+                        <img src="{{ $image->image_path }}" 
                              alt="Reference" 
-                             class="w-full h-32 object-cover rounded-lg border border-oat group-hover:border-mocha transition">
-                    </a>
+                             class="w-full h-32 object-cover rounded border border-gray-300">
                     @endforeach
                 </div>
             </div>
             @endif
+        </div>
 
-            <!-- Negotiation History -->
-            <div class="bg-white rounded-lg border border-oat p-6">
-                <h2 class="text-lg font-serif text-espresso mb-4 flex items-center">
-                    <i data-lucide="message-square" class="w-5 h-5 mr-2"></i>
-                    Negotiation History
-                </h2>
-                
-                @if($customOrder->offers->count() > 0)
-                <div class="space-y-4">
-                    @foreach($customOrder->offers as $offer)
-                    <div class="relative pl-8 pb-6 last:pb-0">
-                        <!-- Timeline line -->
-                        @if(!$loop->last)
-                        <div class="absolute left-3 top-6 bottom-0 w-0.5 bg-oat"></div>
-                        @endif
-                        
-                        <!-- Timeline dot -->
-                        <div class="absolute left-0 top-1 w-6 h-6 rounded-full border-2 flex items-center justify-center
-                            @if($offer->status === 'accepted') bg-green-100 border-green-500
-                            @elseif($offer->status === 'rejected') bg-red-100 border-red-500
-                            @elseif($offer->status === 'pending') bg-blue-100 border-blue-500
-                            @else bg-gray-100 border-gray-300
-                            @endif">
-                            @if($offer->status === 'accepted')
-                                <i data-lucide="check" class="w-3 h-3 text-green-600"></i>
-                            @elseif($offer->status === 'rejected')
-                                <i data-lucide="x" class="w-3 h-3 text-red-600"></i>
-                            @endif
-                        </div>
-
-                        <!-- Offer content -->
-                        <div class="bg-cream rounded-lg p-4 border border-oat">
-                            <div class="flex items-start justify-between mb-2">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-medium text-espresso">
-                                        @if($offer->isFromAdmin())
-                                            Your Offer (Admin)
-                                        @else
-                                            Customer Offer
-                                        @endif
-                                    </span>
-                                    <span class="px-2 py-0.5 rounded-full text-xs font-medium
-                                        @if($offer->status === 'accepted') bg-green-100 text-green-800
-                                        @elseif($offer->status === 'rejected') bg-red-100 text-red-800
-                                        @elseif($offer->status === 'pending') bg-blue-100 text-blue-800
-                                        @else bg-gray-100 text-gray-600
-                                        @endif">
-                                        {{ ucfirst($offer->status) }}
-                                    </span>
-                                </div>
-                                <span class="text-sm text-mocha">{{ $offer->created_at->diffForHumans() }}</span>
+        <!-- Negotiation History -->
+        @if($customOrder->offers->count() > 0)
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-espresso mb-4">Negotiation History</h3>
+            
+            <div class="space-y-4">
+                @foreach($customOrder->offers()->latest()->get() as $offer)
+                    <div class="border-l-4 {{ $offer->isFromAdmin() ? 'border-blue-500 bg-blue-50' : 'border-green-500 bg-green-50' }} pl-4 py-3 rounded-r">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="font-semibold">
+                                    {{ $offer->isFromAdmin() ? 'Admin' : $offer->offeredBy->name }}
+                                </p>
+                                <p class="text-sm text-gray-600">{{ $offer->created_at->format('d M Y, H:i') }}</p>
                             </div>
+                            <div class="text-right">
+                                <p class="font-bold text-lg">Rp {{ number_format($offer->offered_price, 0, ',', '.') }}</p>
+                                @if($offer->status == 'pending')
+                                    <span class="badge badge-pending">Pending</span>
+                                @elseif($offer->status == 'accepted')
+                                    <span class="badge badge-completed">Accepted</span>
+                                @elseif($offer->status == 'rejected')
+                                    <span class="badge badge-cancelled">Rejected</span>
+                                @else
+                                    <span class="badge badge-pending">{{ ucfirst($offer->status) }}</span>
+                                @endif
+                            </div>
+                        </div>
+                        @if($offer->notes)
+                            <p class="text-sm text-gray-700">{{ $offer->notes }}</p>
+                        @endif
 
-                            <p class="text-2xl font-serif text-espresso mb-2">
-                                Rp {{ number_format($offer->offered_price, 0, ',', '.') }}
-                            </p>
-
-                            @if($offer->notes)
-                            <p class="text-sm text-mocha">{{ $offer->notes }}</p>
-                            @endif
-
-                            <!-- Action buttons for pending customer offers -->
-                            @if($offer->isFromCustomer() && $offer->isPending() && $customOrder->canNegotiate())
-                            <div class="flex items-center gap-3 mt-4 pt-4 border-t border-oat">
-                                <form action="{{ route('admin.custom-orders.accept-offer', [$customOrder, $offer]) }}" method="POST" class="flex-1">
+                        @if($offer->isFromCustomer() && $offer->isPending())
+                            <div class="flex gap-2 mt-3">
+                                <form action="{{ route('admin.custom-orders.accept-offer', [$customOrder, $offer]) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm font-medium">
-                                        <i data-lucide="check" class="w-4 h-4 inline mr-1"></i>
-                                        Accept Offer
+                                    <button type="submit" class="text-sm px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">
+                                        Accept
                                     </button>
                                 </form>
-
-                                <form action="{{ route('admin.custom-orders.reject-offer', [$customOrder, $offer]) }}" method="POST" class="flex-1">
+                                <form action="{{ route('admin.custom-orders.reject-offer', [$customOrder, $offer]) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition text-sm font-medium">
-                                        <i data-lucide="x" class="w-4 h-4 inline mr-1"></i>
+                                    <button type="submit" class="text-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
                                         Reject
                                     </button>
                                 </form>
                             </div>
-                            @endif
-                        </div>
+                        @endif
                     </div>
-                    @endforeach
+                @endforeach
+            </div>
+        </div>
+        @endif
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+        <!-- Customer Info -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-espresso mb-4">Customer</h3>
+            <div class="space-y-2 text-sm">
+                <p class="font-semibold">{{ $customOrder->user->name }}</p>
+                <p class="text-gray-600">{{ $customOrder->user->email }}</p>
+                <p class="text-gray-600">{{ $customOrder->user->phone ?? 'No phone' }}</p>
+            </div>
+        </div>
+
+        <!-- Current Status -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-espresso mb-4">Status</h3>
+            <div class="space-y-3">
+                <div>
+                    <p class="text-sm text-gray-500">Current Status</p>
+                    <p class="font-semibold">{{ ucfirst($customOrder->status) }}</p>
                 </div>
-                @else
-                <div class="text-center py-8">
-                    <i data-lucide="inbox" class="w-12 h-12 text-oat mx-auto mb-2"></i>
-                    <p class="text-sm text-mocha">No negotiation history yet</p>
+                @if($customOrder->admin_quoted_price)
+                <div>
+                    <p class="text-sm text-gray-500">Quoted Price</p>
+                    <p class="font-semibold text-terracotta">Rp {{ number_format($customOrder->admin_quoted_price, 0, ',', '.') }}</p>
+                </div>
+                @endif
+                @if($customOrder->final_agreed_price)
+                <div>
+                    <p class="text-sm text-gray-500">Final Agreed Price</p>
+                    <p class="font-semibold text-green-600">Rp {{ number_format($customOrder->final_agreed_price, 0, ',', '.') }}</p>
                 </div>
                 @endif
             </div>
         </div>
 
-        <!-- Sidebar -->
-        <div class="space-y-6">
-            <!-- Price Summary -->
-            <div class="bg-white rounded-lg border border-oat p-6">
-                <h2 class="text-lg font-serif text-espresso mb-4">Price Summary</h2>
+        <!-- Actions -->
+        @if($customOrder->status == 'pending')
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-espresso mb-4">Quote Price</h3>
+            <form action="{{ route('admin.custom-orders.quote-price', $customOrder) }}" method="POST">
+                @csrf
                 
-                <div class="space-y-3">
-                    @if($customOrder->customer_expected_price)
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-mocha">Customer Expected</span>
-                        <span class="font-medium text-espresso">Rp {{ number_format($customOrder->customer_expected_price, 0, ',', '.') }}</span>
-                    </div>
-                    @endif
-
-                    @if($customOrder->admin_quoted_price)
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-mocha">Your Quote</span>
-                        <span class="font-medium text-espresso">Rp {{ number_format($customOrder->admin_quoted_price, 0, ',', '.') }}</span>
-                    </div>
-                    @endif
-
-                    @if($customOrder->final_agreed_price)
-                    <div class="flex items-center justify-between pt-3 border-t border-oat">
-                        <span class="font-medium text-espresso">Agreed Price</span>
-                        <span class="text-xl font-serif text-green-700">Rp {{ number_format($customOrder->final_agreed_price, 0, ',', '.') }}</span>
-                    </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Send Quote -->
-            @if($customOrder->canNegotiate())
-            <div class="bg-white rounded-lg border border-oat p-6">
-                <h2 class="text-lg font-serif text-espresso mb-4">Send Price Quote</h2>
-                
-                <form action="{{ route('admin.custom-orders.quote', $customOrder) }}" method="POST">
-                    @csrf
-                    
-                    <div class="mb-4">
-                        <label for="quoted_price" class="block text-sm font-medium text-espresso mb-2">
-                            Price Quote <span class="text-red-500">*</span>
-                        </label>
-                        <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-mocha">Rp</span>
-                            <input type="number" name="quoted_price" id="quoted_price" required min="0" step="1000"
-                                value="{{ old('quoted_price', $customOrder->admin_quoted_price) }}"
-                                class="w-full pl-12 pr-4 py-2 border border-oat rounded-lg focus:ring-2 focus:ring-mocha focus:border-transparent">
-                        </div>
+                <div class="space-y-4">
+                    <div>
+                        <label for="quoted_price" class="block text-sm font-medium text-gray-700 mb-2">Price (Rp) *</label>
+                        <input type="number" 
+                               name="quoted_price" 
+                               id="quoted_price" 
+                               min="0"
+                               step="1000"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracotta"
+                               required>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="estimated_days" class="block text-sm font-medium text-espresso mb-2">
-                            Estimated Days
-                        </label>
-                        <input type="number" name="estimated_days" id="estimated_days" min="1"
-                            value="{{ old('estimated_days', $customOrder->estimated_days) }}"
-                            class="w-full px-4 py-2 border border-oat rounded-lg focus:ring-2 focus:ring-mocha focus:border-transparent">
+                    <div>
+                        <label for="estimated_days" class="block text-sm font-medium text-gray-700 mb-2">Est. Days</label>
+                        <input type="number" 
+                               name="estimated_days" 
+                               id="estimated_days" 
+                               min="1"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracotta">
                     </div>
 
-                    <div class="mb-4">
-                        <label for="notes" class="block text-sm font-medium text-espresso mb-2">
-                            Notes
-                        </label>
-                        <textarea name="notes" id="notes" rows="3"
-                            placeholder="Explain your quote..."
-                            class="w-full px-4 py-2 border border-oat rounded-lg focus:ring-2 focus:ring-mocha focus:border-transparent">{{ old('notes') }}</textarea>
+                    <div>
+                        <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+                        <textarea name="notes" 
+                                  id="notes" 
+                                  rows="3"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracotta"></textarea>
                     </div>
 
-                    <button type="submit" class="w-full bg-espresso text-cream px-4 py-2 rounded-lg hover:bg-mocha transition font-medium">
+                    <button type="submit" class="w-full btn-primary">
                         Send Quote
                     </button>
-                </form>
-            </div>
-            @endif
-
-            <!-- Actions -->
-            @if($customOrder->isAccepted() && !$customOrder->order_id)
-            <div class="bg-white rounded-lg border border-oat p-6">
-                <h2 class="text-lg font-serif text-espresso mb-4">Convert to Order</h2>
-                <p class="text-sm text-mocha mb-4">Price has been agreed. Convert this to a regular order for processing.</p>
-                <form action="{{ route('admin.custom-orders.convert', $customOrder) }}" method="POST">
-                    @csrf
-                    <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition font-medium">
-                        <i data-lucide="package" class="w-4 h-4 inline mr-1"></i>
-                        Convert to Order
-                    </button>
-                </form>
-            </div>
-            @endif
-
-            @if($customOrder->status === 'pending')
-            <div class="bg-white rounded-lg border border-oat p-6">
-                <h2 class="text-lg font-serif text-espresso mb-4">Reject Request</h2>
-                <form action="{{ route('admin.custom-orders.reject', $customOrder) }}" method="POST" onsubmit="return confirm('Are you sure you want to reject this custom order?')">
-                    @csrf
-                    @method('PATCH')
-                    <div class="mb-4">
-                        <label for="rejection_reason" class="block text-sm font-medium text-espresso mb-2">
-                            Reason (Optional)
-                        </label>
-                        <textarea name="rejection_reason" id="rejection_reason" rows="3"
-                            placeholder="Why are you rejecting this request..."
-                            class="w-full px-4 py-2 border border-oat rounded-lg focus:ring-2 focus:ring-mocha focus:border-transparent"></textarea>
-                    </div>
-                    <button type="submit" class="w-full px-4 py-2 border border-red-500 text-red-600 rounded-lg hover:bg-red-50 transition font-medium">
-                        Reject Request
-                    </button>
-                </form>
-            </div>
-            @endif
-
-            @if($customOrder->order_id)
-            <div class="bg-purple-50 rounded-lg border border-purple-200 p-6">
-                <div class="flex items-start space-x-3">
-                    <i data-lucide="check-circle" class="w-6 h-6 text-purple-600 flex-shrink-0"></i>
-                    <div>
-                        <h3 class="font-medium text-purple-900 mb-1">Converted to Order</h3>
-                        <p class="text-sm text-purple-700 mb-3">This custom order has been converted.</p>
-                        <a href="{{ route('admin.orders.show', $customOrder->order_id) }}" class="inline-flex items-center text-sm font-medium text-purple-700 hover:text-purple-900">
-                            View Order
-                            <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
-                        </a>
-                    </div>
                 </div>
-            </div>
-            @endif
+            </form>
+
+            <form action="{{ route('admin.custom-orders.reject', $customOrder) }}" method="POST" class="mt-4">
+                @csrf
+                <button type="submit" class="w-full btn-secondary bg-red-600 text-white hover:bg-red-700" onclick="return confirm('Reject this request?')">
+                    Reject Request
+                </button>
+            </form>
         </div>
+        @elseif($customOrder->status == 'accepted' && !$customOrder->order_id)
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-espresso mb-4">Convert to Order</h3>
+            <p class="text-sm text-gray-600 mb-4">
+                This custom order has been accepted. Convert it to a regular order to proceed with production and payment.
+            </p>
+            <form action="{{ route('admin.custom-orders.convert-to-order', $customOrder) }}" method="POST">
+                @csrf
+                <button type="submit" class="w-full btn-primary" onclick="return confirm('Convert to order?')">
+                    Convert to Order
+                </button>
+            </form>
+        </div>
+        @elseif($customOrder->order_id)
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+            <p class="text-sm text-green-800 mb-2">Converted to Order</p>
+            <a href="{{ route('admin.orders.show', $customOrder->order_id) }}" class="text-blue-600 hover:text-blue-800 text-sm">
+                View Order →
+            </a>
+        </div>
+        @endif
     </div>
 </div>
-
-<script>
-    lucide.createIcons();
-</script>
 @endsection

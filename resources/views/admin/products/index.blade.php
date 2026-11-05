@@ -27,7 +27,7 @@
             @forelse($products as $product)
                 <tr>
                     <td>
-                        <img src="{{ asset('images/products/' . $product->image) }}" 
+                        <img src="{{ $product->image }}" 
                              alt="{{ $product->name }}" 
                              class="w-16 h-16 object-cover rounded"
                              onerror="this.src='https://via.placeholder.com/100x100/F5F0E8/342C28?text=Product'">
@@ -41,7 +41,7 @@
                         </span>
                     </td>
                     <td>
-                        @if($product->is_available && $product->stock > 0)
+                        @if($product->is_active && $product->stock > 0)
                             <span class="badge badge-completed">Available</span>
                         @else
                             <span class="badge badge-cancelled">Unavailable</span>

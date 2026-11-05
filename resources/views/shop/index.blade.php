@@ -61,7 +61,7 @@
                     <div class="product-card">
                         <a href="{{ route('product.show', $product->slug) }}">
                             @if($product->image)
-                                <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}" onerror="this.src='https://via.placeholder.com/400x400/F5F0E8/342C28?text={{ urlencode($product->name) }}'">
+                                <img src="{{ $product->image }}" alt="{{ $product->name }}" onerror="this.src='https://via.placeholder.com/400x400/F5F0E8/342C28?text={{ urlencode($product->name) }}'">
                             @else
                                 <img src="https://via.placeholder.com/400x400/F5F0E8/342C28?text={{ urlencode($product->name) }}" alt="{{ $product->name }}">
                             @endif
