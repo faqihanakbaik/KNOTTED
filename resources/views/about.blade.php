@@ -4,9 +4,9 @@
 
 @section('content')
 <!-- Hero -->
-<section class="bg-gradient-to-br from-cream via-oat/30 to-cream py-20">
+<section class="bg-cream py-20">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <span class="emoji-decor-large" aria-hidden="true">🧶</span>
+        <iconify-icon icon="solar:pallete-2-bold" class="text-mocha" style="font-size: 4rem; display: block; margin: 0 auto 1.5rem;"></iconify-icon>
         <h1 class="hero-title mb-6">Made by hand,<br>tied with love</h1>
         <p class="text-xl text-mocha leading-relaxed">
             Every stitch tells a story of craftsmanship, care, and creativity

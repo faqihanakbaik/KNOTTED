@@ -3,7 +3,7 @@
 @section('title', 'Register - KNOTTED')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-cream via-oat/30 to-cream flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-cream flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full">
         <div class="bg-white rounded-lg shadow-xl border border-oat p-8">
             <!-- Logo & Header -->

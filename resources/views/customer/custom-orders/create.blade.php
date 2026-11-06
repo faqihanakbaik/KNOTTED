@@ -3,7 +3,7 @@
 @section('title', 'Create Custom Order')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#F5F0E8] via-white to-[#FFFFFF] py-12">
+<div class="min-h-screen bg-white py-12">
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="mb-8" data-aos="fade-down">
         <a href="{{ route('customer.custom-orders.index') }}" class="inline-flex items-center text-[#947765] hover:text-[#DCCBBC] mb-4 font-medium transition-all duration-300 hover:gap-3 gap-2">
@@ -15,7 +15,7 @@
     </div>
 
     @if(session('error'))
-    <div class="bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-300 text-red-800 px-6 py-4 rounded-2xl mb-6 shadow-lg" data-aos="fade-up">
+    <div class="bg-red-100 border-2 border-red-300 text-red-800 px-6 py-4 rounded-2xl mb-6 shadow-lg" data-aos="fade-up">
         <div class="flex items-start gap-3">
             <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
             <span>{{ session('error') }}</span>
@@ -33,7 +33,7 @@
                     Request Type <span class="text-red-500">*</span>
                 </label>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <label class="relative flex items-start p-5 border-2 border-[#F5F0E8] rounded-2xl cursor-pointer hover:border-[#DCCBBC] hover:shadow-lg transition-all duration-300 has-[:checked]:border-[#DCCBBC] has-[:checked]:bg-gradient-to-br has-[:checked]:from-[#F5F0E8] has-[:checked]:to-white has-[:checked]:shadow-lg">
+                    <label class="relative flex items-start p-5 border-2 border-[#F5F0E8] rounded-2xl cursor-pointer hover:border-[#DCCBBC] hover:shadow-lg transition-all duration-300 has-[:checked]:border-[#DCCBBC] has-[:checked]:bg-[#F5F0E8] has-[:checked]:shadow-lg">
                         <input type="radio" name="request_type" value="modify_existing" class="mt-1 accent-[#DCCBBC]" required {{ old('request_type') === 'modify_existing' ? 'checked' : '' }}>
                         <div class="ml-4">
                             <div class="flex items-center gap-2 mb-2">
@@ -44,7 +44,7 @@
                         </div>
                     </label>
 
-                    <label class="relative flex items-start p-5 border-2 border-[#F5F0E8] rounded-2xl cursor-pointer hover:border-[#DCCBBC] hover:shadow-lg transition-all duration-300 has-[:checked]:border-[#DCCBBC] has-[:checked]:bg-gradient-to-br has-[:checked]:from-[#F5F0E8] has-[:checked]:to-white has-[:checked]:shadow-lg">
+                    <label class="relative flex items-start p-5 border-2 border-[#F5F0E8] rounded-2xl cursor-pointer hover:border-[#DCCBBC] hover:shadow-lg transition-all duration-300 has-[:checked]:border-[#DCCBBC] has-[:checked]:bg-[#F5F0E8] has-[:checked]:shadow-lg">
                         <input type="radio" name="request_type" value="new_design" class="mt-1 accent-[#DCCBBC]" required {{ old('request_type') === 'new_design' ? 'checked' : '' }}>
                         <div class="ml-4">
                             <div class="flex items-center gap-2 mb-2">
@@ -202,7 +202,7 @@
             </div>
 
             <!-- Terms Notice -->
-            <div class="mt-8 p-6 bg-gradient-to-br from-[#F5F0E8] to-white rounded-2xl border-2 border-[#DCCBBC]">
+            <div class="mt-8 p-6 bg-[#F5F0E8] rounded-2xl border-2 border-[#DCCBBC]">
                 <div class="flex items-start space-x-3">
                     <i data-lucide="info" class="w-6 h-6 text-[#DCCBBC] flex-shrink-0 mt-1"></i>
                     <div class="text-sm text-[#947765]/90">
@@ -219,7 +219,7 @@
 
             <!-- Submit Button -->
             <div class="flex items-center gap-4 mt-8 pt-6 border-t-2 border-[#F5F0E8]">
-                <button type="submit" class="flex-1 bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] hover:from-[#F5F0E8] hover:to-[#DCCBBC] text-white font-bold px-8 py-4 rounded-full transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2">
+                <button type="submit" class="flex-1 bg-[#DCCBBC] hover:bg-[#947765] text-[#342C28] hover:text-white font-bold px-8 py-4 rounded-full transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2">
                     <i data-lucide="send" class="w-5 h-5"></i>
                     Submit Custom Request
                 </button>
@@ -250,7 +250,7 @@
                 div.className = 'relative group';
                 div.innerHTML = `
                     <img src="${e.target.result}" class="w-full h-32 object-cover rounded-xl border-2 border-[#F5F0E8]">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#947765] to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-3">
+                    <div class="absolute inset-0 bg-[#947765]/50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-3">
                         <p class="text-white text-xs font-medium truncate">${file.name}</p>
                     </div>
                 `;

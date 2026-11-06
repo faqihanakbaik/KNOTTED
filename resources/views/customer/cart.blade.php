@@ -13,7 +13,7 @@
                 <div class="lg:col-span-2 space-y-4">
                     @foreach($cart->items as $item)
                         <div class="bg-white rounded-lg p-6 shadow-sm border border-oat flex gap-6">
-                            <img src="{{ asset('images/products/' . $item->product->image) }}" 
+                            <img src="{{ $item->product->image }}" 
                                  alt="{{ $item->product->name }}" 
                                  class="w-24 h-24 object-cover rounded"
                                  onerror="this.src='https://via.placeholder.com/150x150/F5F0E8/342C28?text=Product'">

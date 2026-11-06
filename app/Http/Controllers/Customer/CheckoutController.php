@@ -31,11 +31,15 @@ class CheckoutController extends Controller
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email',
             'customer_phone' => 'required|string|max:20',
+            'recipient_name' => 'required|string|max:255',
+            'recipient_phone' => 'required|string|max:20',
             'shipping_address' => 'required|string',
+            'province' => 'required|string|max:100',
             'city' => 'required|string|max:100',
-            'postal_code' => 'nullable|string|max:10',
+            'district' => 'required|string|max:100',
+            'postal_code' => 'required|string|max:10',
             'notes' => 'nullable|string',
-            'payment_method' => 'required|in:bank_transfer,cod',
+            'payment_method' => 'required|in:bank_transfer,qris',
         ]);
 
         $cart = auth()->user()->cart()->with('items.product')->first();
@@ -53,19 +57,30 @@ class CheckoutController extends Controller
 
         DB::beginTransaction();
         try {
+            // Shipping cost (flat rate for now)
+            $shippingCost = 15000;
+            $totalAmount = $cart->getTotalAmount() + $shippingCost;
+
             // Create order
             $order = Order::create([
                 'user_id' => auth()->id(),
-                'total_amount' => $cart->getTotalAmount(),
+                'order_number' => 'ORD-' . strtoupper(uniqid()),
+                'subtotal' => $cart->getTotalAmount(),
+                'shipping_cost' => $shippingCost,
+                'total_amount' => $totalAmount,
                 'status' => 'pending',
                 'payment_method' => $validated['payment_method'],
-                'payment_status' => $validated['payment_method'] === 'cod' ? 'unpaid' : 'unpaid',
+                'payment_status' => 'pending',
                 'customer_name' => $validated['customer_name'],
                 'customer_email' => $validated['customer_email'],
                 'customer_phone' => $validated['customer_phone'],
+                'recipient_name' => $validated['recipient_name'],
+                'recipient_phone' => $validated['recipient_phone'],
                 'shipping_address' => $validated['shipping_address'],
+                'province' => $validated['province'],
                 'city' => $validated['city'],
-                'postal_code' => $validated['postal_code'] ?? null,
+                'district' => $validated['district'],
+                'postal_code' => $validated['postal_code'],
                 'notes' => $validated['notes'] ?? null,
             ]);
 
@@ -98,8 +113,9 @@ class CheckoutController extends Controller
 
             DB::commit();
 
-            return redirect()->route('customer.orders.show', $order->id)
-                ->with('success', 'Order placed successfully!');
+            // Redirect to payment upload page
+            return redirect()->route('customer.payments.upload', $order->id)
+                ->with('success', 'Order placed successfully! Please complete your payment.');
 
         } catch (\Exception $e) {
             DB::rollBack();

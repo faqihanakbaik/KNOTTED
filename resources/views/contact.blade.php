@@ -22,7 +22,7 @@
                             </svg>
                             <div>
                                 <p class="font-semibold text-espresso">Email</p>
-                                <p class="text-mocha">hello@knotted.com</p>
+                                <a href="mailto:faqihmuqoddam3007@gmail.com" class="text-mocha hover:text-espresso transition">faqihmuqoddam3007@gmail.com</a>
                             </div>
                         </div>
 
@@ -31,8 +31,8 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                             </svg>
                             <div>
-                                <p class="font-semibold text-espresso">Phone</p>
-                                <p class="text-mocha">+62 812-3456-7890</p>
+                                <p class="font-semibold text-espresso">Phone / WhatsApp</p>
+                                <a href="https://wa.me/6285892992913" target="_blank" class="text-mocha hover:text-espresso transition">+62 858-9299-2913</a>
                             </div>
                         </div>
 
@@ -63,14 +63,17 @@
                 <div class="bg-white rounded-lg p-6 border border-oat">
                     <h3 class="font-serif text-xl font-bold text-espresso mb-4">Follow Us</h3>
                     <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 bg-espresso text-cream rounded-full flex items-center justify-center hover:bg-mocha transition">
-                            <span class="text-xl">📷</span>
+                        <a href="https://instagram.com/faqiiihhhhhh" target="_blank" class="w-10 h-10 bg-espresso text-cream rounded-full flex items-center justify-center hover:bg-mocha transition" title="Instagram">
+                            <iconify-icon icon="mdi:instagram" class="text-cream" style="font-size: 1.25rem;"></iconify-icon>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-espresso text-cream rounded-full flex items-center justify-center hover:bg-mocha transition">
-                            <span class="text-xl">📘</span>
+                        <a href="https://github.com/faqihanakbaik" target="_blank" class="w-10 h-10 bg-espresso text-cream rounded-full flex items-center justify-center hover:bg-mocha transition" title="GitHub">
+                            <iconify-icon icon="mdi:github" class="text-cream" style="font-size: 1.25rem;"></iconify-icon>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-espresso text-cream rounded-full flex items-center justify-center hover:bg-mocha transition">
-                            <span class="text-xl">💬</span>
+                        <a href="https://wa.me/6285892992913" target="_blank" class="w-10 h-10 bg-espresso text-cream rounded-full flex items-center justify-center hover:bg-mocha transition" title="WhatsApp">
+                            <iconify-icon icon="mdi:whatsapp" class="text-cream" style="font-size: 1.25rem;"></iconify-icon>
+                        </a>
+                        <a href="https://www.linkedin.com/in/muhammad-faqih-muqoddam" target="_blank" class="w-10 h-10 bg-espresso text-cream rounded-full flex items-center justify-center hover:bg-mocha transition" title="LinkedIn">
+                            <iconify-icon icon="mdi:linkedin" class="text-cream" style="font-size: 1.25rem;"></iconify-icon>
                         </a>
                     </div>
                 </div>
@@ -109,7 +112,7 @@
         </div>
 
         <!-- CTA -->
-        <div class="mt-12 text-center bg-gradient-to-br from-sage/20 to-oat/20 rounded-lg p-8">
+        <div class="mt-12 text-center bg-[#F5F0E8] rounded-lg p-8">
             <h3 class="font-serif text-2xl font-bold text-espresso mb-4">Have questions about an order?</h3>
             <p class="text-mocha mb-6">Check your order status in your account dashboard</p>
             @auth

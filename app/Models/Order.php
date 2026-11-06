@@ -13,6 +13,7 @@ class Order extends Model
         'order_number',
         'user_id',
         'status',
+        'payment_status',
         'subtotal',
         'shipping_cost',
         'total_amount',
@@ -22,12 +23,20 @@ class Order extends Model
         'payment_verified_at',
         'payment_verified_by',
         'payment_rejection_reason',
+        'customer_name',
+        'customer_email',
+        'customer_phone',
+        'recipient_name',
+        'recipient_phone',
         'shipping_address',
+        'city',
+        'province',
+        'district',
+        'postal_code',
         'shipping_city',
         'shipping_province',
         'shipping_postal_code',
         'shipping_phone',
-        'recipient_name',
         'notes',
         'completed_at',
         'cancelled_at',
@@ -54,6 +63,11 @@ class Order extends Model
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
     }
 
     public function paymentVerifiedBy()

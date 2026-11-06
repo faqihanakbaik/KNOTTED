@@ -4,7 +4,7 @@
 
 @section('content')
 <!-- Hero Section with Product Carousel -->
-<section class="relative bg-gradient-to-br from-[#F5F0E8] via-white to-[#FFFFFF] py-16 md:py-20 flex items-center overflow-hidden">
+<section class="relative bg-[#F5F0E8] py-16 md:py-20 flex items-center overflow-hidden">
     <!-- Decorative Elements -->
     <div class="absolute top-10 right-10 w-32 h-32 bg-[#DCCBBC]/10 rounded-full blur-3xl"></div>
     <div class="absolute bottom-10 left-10 w-40 h-40 bg-[#F5F0E8]/10 rounded-full blur-3xl"></div>
@@ -21,7 +21,7 @@
                 
                 <h1 class="font-serif text-5xl lg:text-6xl xl:text-7xl font-bold text-[#947765] leading-tight">
                     Made by hand,<br>
-                    <span class="inline-flex items-center gap-3 bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] bg-clip-text text-transparent">
+                    <span class="inline-flex items-center gap-3 text-[#947765]">
                         tied with love.
                         <svg class="w-10 h-10 lg:w-12 lg:h-12 text-[#DCCBBC]" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M25 45C20 35 5 30 5 20C5 10 15 5 25 15C35 5 45 10 45 20C45 30 30 35 25 45Z" stroke="currentColor" stroke-width="2" fill="currentColor" opacity="0.3"/>
@@ -35,7 +35,7 @@
                 </p>
                 
                 <div class="flex flex-wrap gap-4 pt-3">
-                    <a href="{{ route('shop.index') }}" class="bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] hover:from-[#F5F0E8] hover:to-[#DCCBBC] text-white font-semibold px-8 py-4 rounded-full inline-flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    <a href="{{ route('shop.index') }}" class="bg-[#DCCBBC] hover:bg-[#947765] text-[#342C28] hover:text-white font-semibold px-8 py-4 rounded-full inline-flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                         Shop Collection
                         <i data-lucide="arrow-right" class="w-5 h-5"></i>
                     </a>
@@ -63,7 +63,7 @@
             
             <!-- Right: Product Carousel -->
             <div class="relative hidden lg:block" data-aos="fade-left">
-                <div id="hero-carousel" class="relative bg-gradient-to-br from-white to-[#F5F0E8] backdrop-blur-sm rounded-3xl p-8 border-2 border-[#DCCBBC]/30 shadow-2xl overflow-hidden">
+                <div id="hero-carousel" class="relative bg-white backdrop-blur-sm rounded-3xl p-8 border-2 border-[#DCCBBC]/30 shadow-2xl overflow-hidden">
                     <!-- Carousel Container -->
                     <div class="carousel-wrapper relative w-full h-[500px]">
                         @php
@@ -83,7 +83,7 @@
                                 <!-- Product Info Overlay -->
                                 <div class="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl">
                                     <h3 class="font-serif font-bold text-lg text-[#947765] mb-1">{{ $product->name }}</h3>
-                                    <p class="text-2xl font-bold bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] bg-clip-text text-transparent">
+                                    <p class="text-2xl font-bold text-[#947765]">
                                         Rp {{ number_format($product->price, 0, ',', '.') }}
                                     </p>
                                     <a href="{{ route('product.show', $product->slug) }}" class="inline-flex items-center gap-1 text-xs text-[#947765] hover:text-[#DCCBBC] transition mt-2">
@@ -107,7 +107,7 @@
                     </div>
                     
                     <!-- Brand Badge -->
-                    <div class="absolute -bottom-5 -right-5 bg-gradient-to-br from-[#DCCBBC] to-[#F5F0E8] text-white px-6 py-3 rounded-2xl shadow-xl border-4 border-white z-20">
+                    <div class="absolute -bottom-5 -right-5 bg-[#DCCBBC] text-white px-6 py-3 rounded-2xl shadow-xl border-4 border-white z-20">
                         <p class="text-xs font-medium mb-0.5">crafted by</p>
                         <p class="font-serif font-bold text-xl">KNOTTED</p>
                     </div>
@@ -182,7 +182,7 @@
 </section>
 
 <!-- Featured Products -->
-<section class="py-16 bg-gradient-to-br from-[#F5F0E8] via-white to-[#FFFFFF]">
+<section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Section Header -->
         <div class="flex items-end justify-between mb-10" data-aos="fade-up">
@@ -191,7 +191,7 @@
                 <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#947765] mb-2">Best Sellers <iconify-icon icon="solar:star-bold" class="inline-block w-8 h-8"></iconify-icon></h2>
                 <p class="text-[#947765]/70 text-base mt-1">Crafted with love, cherished by many</p>
             </div>
-            <a href="{{ route('shop.index') }}" class="hidden md:inline-flex items-center gap-2 text-white bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] hover:from-[#F5F0E8] hover:to-[#DCCBBC] px-6 py-3 rounded-full font-semibold text-sm shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105">
+            <a href="{{ route('shop.index') }}" class="hidden md:inline-flex items-center gap-2 bg-[#DCCBBC] hover:bg-[#947765] text-[#342C28] hover:text-white px-6 py-3 rounded-full font-semibold text-sm shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105">
                 View All Products
                 <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </a>
@@ -206,7 +206,7 @@
             @forelse($allProducts as $product)
                 <div class="group product-card bg-white rounded-3xl overflow-hidden border-2 border-[#F5F0E8] hover:border-[#DCCBBC] hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
                     <!-- Image Container -->
-                    <div class="relative overflow-hidden bg-gradient-to-br from-[#FFFFFF] to-[#F5F0E8]">
+                    <div class="relative overflow-hidden bg-[#F5F0E8]">
                         <a href="{{ route('product.show', $product->slug) }}">
                             @if($product->image)
                                 <img src="{{ $product->image }}" 
@@ -221,13 +221,13 @@
                         </a>
                         
                         <!-- Wishlist Button -->
-                        <button class="absolute top-4 right-4 w-11 h-11 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-gradient-to-br hover:from-[#DCCBBC] hover:to-[#F5F0E8] transition-all shadow-lg group-hover:scale-110 hover:shadow-xl">
+                        <button class="absolute top-4 right-4 w-11 h-11 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-[#DCCBBC] transition-all shadow-lg group-hover:scale-110 hover:shadow-xl">
                             <i data-lucide="heart" class="w-5 h-5 text-[#947765] hover:text-white transition-colors"></i>
                         </button>
                         
                         <!-- NEW badge for first 2 products -->
                         @if($loop->index < 2)
-                            <div class="absolute top-4 left-4 bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                            <div class="absolute top-4 left-4 bg-[#947765] text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
                                 <iconify-icon icon="solar:star-bold" class="inline-block w-3 h-3"></iconify-icon> NEW
                             </div>
                         @endif
@@ -260,14 +260,14 @@
                                 <span class="text-[#947765]/70 ml-1 font-medium">({{ rand(50, 999) }})</span>
                             </div>
                             @if($product->isInStock())
-                                <span class="bg-gradient-to-r from-green-100 to-green-50 text-green-700 px-3 py-1 rounded-full font-semibold text-xs">In Stock</span>
+                                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold text-xs">In Stock</span>
                             @else
-                                <span class="bg-gradient-to-r from-red-100 to-red-50 text-red-700 px-3 py-1 rounded-full font-semibold text-xs">Out of Stock</span>
+                                <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full font-semibold text-xs">Out of Stock</span>
                             @endif
                         </div>
                         
                         <!-- Add to Cart Button -->
-                        <button class="w-full bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] hover:from-[#F5F0E8] hover:to-[#DCCBBC] text-white font-semibold py-3 rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center justify-center gap-2">
+                        <button class="w-full bg-[#DCCBBC] hover:bg-[#947765] text-[#342C28] hover:text-white font-semibold py-3 rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center justify-center gap-2">
                             <i data-lucide="shopping-cart" class="w-4 h-4"></i>
                             Add to Cart
                         </button>
@@ -282,7 +282,7 @@
 
         <!-- Mobile View All Button -->
         <div class="text-center mt-12 md:hidden" data-aos="fade-up">
-            <a href="{{ route('shop.index') }}" class="bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] hover:from-[#F5F0E8] hover:to-[#DCCBBC] text-white font-semibold px-10 py-4 rounded-full inline-flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <a href="{{ route('shop.index') }}" class="bg-[#DCCBBC] hover:bg-[#947765] text-[#342C28] hover:text-white font-semibold px-10 py-4 rounded-full inline-flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                 View All Products
                 <i data-lucide="arrow-right" class="w-5 h-5"></i>
             </a>
@@ -291,7 +291,7 @@
 </section>
 
 <!-- Shop by Category -->
-<section class="relative py-20 bg-gradient-to-br from-[#E8DDD0] to-[#F5EFE7] overflow-hidden">
+<section class="relative py-20 bg-[#F5F0E8] overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <!-- Left: Text & Button -->
@@ -321,37 +321,54 @@
                     <path d="M30,50 L70,50" stroke="currentColor" stroke-width="2"/>
                 </svg>
                 
+                @php
+                    // Get 4 random products for polaroids
+                    $polaroidProducts = App\Models\Product::available()->inRandomOrder()->take(4)->get();
+                @endphp
+                
+                @if($polaroidProducts->count() >= 1)
                 <!-- Polaroid 1 -->
                 <div class="absolute top-4 right-20 w-40 bg-white p-3 shadow-xl transform rotate-12 hover:rotate-6 transition-transform duration-300 border border-gray-100">
-                    <img src="https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=200&h=200&fit=crop" 
-                         alt="Crochet Item" 
-                         class="w-full h-32 object-cover">
-                    <p class="text-center text-xs mt-2 font-handwriting text-espresso">Amigurumi</p>
+                    <img src="{{ $polaroidProducts[0]->image }}" 
+                         alt="{{ $polaroidProducts[0]->name }}" 
+                         class="w-full h-32 object-cover"
+                         onerror="this.src='https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=200&h=200&fit=crop'">
+                    <p class="text-center text-xs mt-2 font-handwriting text-espresso">{{ Str::limit($polaroidProducts[0]->name, 15) }}</p>
                 </div>
+                @endif
                 
+                @if($polaroidProducts->count() >= 2)
                 <!-- Polaroid 2 -->
                 <div class="absolute top-32 left-10 w-40 bg-white p-3 shadow-xl transform -rotate-6 hover:rotate-0 transition-transform duration-300 border border-gray-100">
-                    <img src="https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=200&h=200&fit=crop" 
-                         alt="Crochet Item" 
-                         class="w-full h-32 object-cover">
-                    <p class="text-center text-xs mt-2 font-handwriting text-espresso">Flowers</p>
+                    <img src="{{ $polaroidProducts[1]->image }}" 
+                         alt="{{ $polaroidProducts[1]->name }}" 
+                         class="w-full h-32 object-cover"
+                         onerror="this.src='https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=200&h=200&fit=crop'">
+                    <p class="text-center text-xs mt-2 font-handwriting text-espresso">{{ Str::limit($polaroidProducts[1]->name, 15) }}</p>
                 </div>
+                @endif
                 
+                @if($polaroidProducts->count() >= 3)
                 <!-- Polaroid 3 -->
                 <div class="absolute bottom-24 right-8 w-40 bg-white p-3 shadow-xl transform rotate-6 hover:rotate-3 transition-transform duration-300 border border-gray-100">
-                    <img src="https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=200&h=200&fit=crop" 
-                         alt="Crochet Item" 
-                         class="w-full h-32 object-cover">
-                    <p class="text-center text-xs mt-2 font-handwriting text-espresso">Bags</p>
+                    <img src="{{ $polaroidProducts[2]->image }}" 
+                         alt="{{ $polaroidProducts[2]->name }}" 
+                         class="w-full h-32 object-cover"
+                         onerror="this.src='https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=200&h=200&fit=crop'">
+                    <p class="text-center text-xs mt-2 font-handwriting text-espresso">{{ Str::limit($polaroidProducts[2]->name, 15) }}</p>
                 </div>
+                @endif
                 
+                @if($polaroidProducts->count() >= 4)
                 <!-- Polaroid 4 -->
                 <div class="absolute bottom-4 left-32 w-40 bg-white p-3 shadow-xl transform -rotate-3 hover:rotate-0 transition-transform duration-300 border border-gray-100">
-                    <img src="https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=200&h=200&fit=crop" 
-                         alt="Crochet Item" 
-                         class="w-full h-32 object-cover">
-                    <p class="text-center text-xs mt-2 font-handwriting text-espresso">Accessories</p>
+                    <img src="{{ $polaroidProducts[3]->image }}" 
+                         alt="{{ $polaroidProducts[3]->name }}" 
+                         class="w-full h-32 object-cover"
+                         onerror="this.src='https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=200&h=200&fit=crop'">
+                    <p class="text-center text-xs mt-2 font-handwriting text-espresso">{{ Str::limit($polaroidProducts[3]->name, 15) }}</p>
                 </div>
+                @endif
             </div>
         </div>
         
@@ -360,17 +377,17 @@
             @foreach($categories as $category)
                 <a href="{{ route('shop.index', ['category' => $category->id]) }}" 
                    class="bg-white rounded-xl p-6 text-center hover:shadow-lg transition border border-oat/50">
-                    <span class="text-4xl block mb-2">
+                    <span class="block mb-2">
                         @if(str_contains(strtolower($category->name), 'amigurumi'))
-                            🧸
+                            <iconify-icon icon="solar:teddy-bear-bold" class="text-mocha" style="font-size: 3rem;"></iconify-icon>
                         @elseif(str_contains(strtolower($category->name), 'flower'))
-                            🌷
+                            <iconify-icon icon="solar:flower-bold" class="text-mocha" style="font-size: 3rem;"></iconify-icon>
                         @elseif(str_contains(strtolower($category->name), 'keychain'))
-                            🔑
+                            <iconify-icon icon="solar:key-bold" class="text-mocha" style="font-size: 3rem;"></iconify-icon>
                         @elseif(str_contains(strtolower($category->name), 'bag'))
-                            👜
+                            <iconify-icon icon="solar:bag-3-bold" class="text-mocha" style="font-size: 3rem;"></iconify-icon>
                         @else
-                            🎀
+                            <iconify-icon icon="solar:gift-bold" class="text-mocha" style="font-size: 3rem;"></iconify-icon>
                         @endif
                     </span>
                     <h3 class="font-serif font-bold text-espresso text-sm">{{ $category->name }}</h3>
@@ -391,7 +408,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
             <!-- Feature 1 -->
             <div class="feature-item">
-                <span class="feature-emoji" aria-hidden="true">🧶</span>
+                <iconify-icon icon="solar:pallete-2-bold" class="text-mocha" style="font-size: 3rem;"></iconify-icon>
                 <h3 class="font-serif text-2xl font-bold text-espresso mb-3">
                     Handmade Quality
                 </h3>
@@ -402,7 +419,7 @@
 
             <!-- Feature 2 -->
             <div class="feature-item">
-                <span class="feature-emoji" aria-hidden="true">💝</span>
+                <iconify-icon icon="solar:gift-bold" class="text-mocha" style="font-size: 3rem;"></iconify-icon>
                 <h3 class="font-serif text-2xl font-bold text-espresso mb-3">
                     Gift Ready
                 </h3>
@@ -426,7 +443,7 @@
 </section>
 
 <!-- Brand Story -->
-<section class="py-20 bg-gradient-to-br from-sage/20 to-oat/20">
+<section class="py-20 bg-[#F5F0E8]">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <iconify-icon icon="solar:home-2-bold" class="text-mocha" style="font-size: 3rem; display: block; margin: 0 auto 1rem;"></iconify-icon>
         <h2 class="section-title">Our Story</h2>
@@ -519,7 +536,7 @@
         dotsContainer.innerHTML = '';
         for (let i = 0; i < totalSlides; i++) {
             const dot = document.createElement('button');
-            dot.className = `w-2.5 h-2.5 rounded-full transition ${i === 0 ? 'w-10 bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8]' : 'bg-[#DCCBBC]/30 hover:bg-[#DCCBBC]/60'}`;
+            dot.className = `w-2.5 h-2.5 rounded-full transition ${i === 0 ? 'w-10 bg-[#DCCBBC]' : 'bg-[#DCCBBC]/30 hover:bg-[#DCCBBC]/60'}`;
             dot.onclick = () => goToSlide(i);
             dotsContainer.appendChild(dot);
         }
@@ -540,7 +557,7 @@
         const dots = document.querySelectorAll('#carousel-dots button');
         dots.forEach((dot, index) => {
             if (index === currentSlide) {
-                dot.className = 'w-10 h-2.5 rounded-full bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] transition';
+                dot.className = 'w-10 h-2.5 rounded-full bg-[#DCCBBC] transition';
             } else {
                 dot.className = 'w-2.5 h-2.5 rounded-full bg-[#DCCBBC]/30 hover:bg-[#DCCBBC]/60 transition';
             }

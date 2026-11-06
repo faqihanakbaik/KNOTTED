@@ -16,15 +16,6 @@
 </head>
 <body class="font-sans antialiased bg-cream text-espresso">
     
-    <!-- Top Banner - Store Announcement -->
-    <div class="bg-espresso text-cream py-2.5 px-4">
-        <div class="max-w-7xl mx-auto">
-            <p class="text-center text-sm">
-                <span class="font-semibold">Handcrafted with Love</span> • Made to order headwear • Est. 3-5 working days
-            </p>
-        </div>
-    </div>
-
     <!-- Navigation -->
     <nav class="sticky top-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-oat">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -212,9 +203,10 @@
                 <div>
                     <h4 class="font-semibold mb-4">Get in Touch</h4>
                     <ul class="space-y-2 text-oat text-sm">
-                        <li>Email: hello@knotted.com</li>
-                        <li>Phone: +62 812-3456-7890</li>
-                        <li>Instagram: @knotted.id</li>
+                        <li><a href="mailto:faqihmuqoddam3007@gmail.com" class="hover:text-cream transition">Email: faqihmuqoddam3007@gmail.com</a></li>
+                        <li><a href="https://wa.me/6285892992913" target="_blank" class="hover:text-cream transition">WhatsApp: +62 858-9299-2913</a></li>
+                        <li><a href="https://instagram.com/faqiiihhhhhh" target="_blank" class="hover:text-cream transition">Instagram: @faqiiihhhhhh</a></li>
+                        <li><a href="https://github.com/faqihanakbaik" target="_blank" class="hover:text-cream transition">GitHub: faqihanakbaik</a></li>
                     </ul>
                 </div>
             </div>

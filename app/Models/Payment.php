@@ -13,15 +13,18 @@ class Payment extends Model
         'order_id',
         'amount',
         'payment_method',
+        'payment_date',
+        'payment_proof',
         'status',
-        'proof_image',
         'notes',
+        'admin_notes',
         'verified_at',
         'verified_by',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'payment_date' => 'date',
         'verified_at' => 'datetime',
     ];
 
@@ -42,8 +45,23 @@ class Payment extends Model
         return $this->status === 'pending';
     }
 
+    public function isUnderReview()
+    {
+        return $this->status === 'under_review';
+    }
+
+    public function isPaid()
+    {
+        return $this->status === 'paid';
+    }
+
+    public function isRejected()
+    {
+        return $this->status === 'rejected';
+    }
+
     public function isVerified()
     {
-        return $this->status === 'verified';
+        return $this->status === 'paid' || $this->status === 'verified';
     }
 }

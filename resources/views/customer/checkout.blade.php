@@ -49,8 +49,24 @@
                     
                     <div class="space-y-4">
                         <div>
-                            <label class="form-label">Complete Address *</label>
-                            <textarea name="shipping_address" rows="3" required class="form-input">{{ old('shipping_address', $user->address) }}</textarea>
+                            <label class="form-label">Nama Penerima *</label>
+                            <input type="text" name="recipient_name" value="{{ old('recipient_name', $user->name) }}" required class="form-input" placeholder="Nama lengkap penerima">
+                            @error('recipient_name')
+                                <p class="form-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="form-label">Nomor HP / WhatsApp *</label>
+                            <input type="text" name="recipient_phone" value="{{ old('recipient_phone', $user->phone) }}" required class="form-input" placeholder="08xxxxxxxxxx">
+                            @error('recipient_phone')
+                                <p class="form-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="form-label">Alamat Lengkap *</label>
+                            <textarea name="shipping_address" rows="3" required class="form-input" placeholder="Jalan, Nomor Rumah, RT/RW, Kelurahan">{{ old('shipping_address', $user->address) }}</textarea>
                             @error('shipping_address')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
@@ -58,16 +74,34 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="form-label">City *</label>
-                                <input type="text" name="city" value="{{ old('city', $user->city) }}" required class="form-input">
-                                @error('city')
+                                <label class="form-label">Provinsi *</label>
+                                <input type="text" name="province" value="{{ old('province') }}" required class="form-input" placeholder="Contoh: DKI Jakarta">
+                                @error('province')
                                     <p class="form-error">{{ $message }}</p>
                                 @enderror
                             </div>
 
                             <div>
-                                <label class="form-label">Postal Code</label>
-                                <input type="text" name="postal_code" value="{{ old('postal_code', $user->postal_code) }}" class="form-input">
+                                <label class="form-label">Kota / Kabupaten *</label>
+                                <input type="text" name="city" value="{{ old('city', $user->city) }}" required class="form-input" placeholder="Contoh: Jakarta Selatan">
+                                @error('city')
+                                    <p class="form-error">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="form-label">Kecamatan *</label>
+                                <input type="text" name="district" value="{{ old('district') }}" required class="form-input" placeholder="Contoh: Kebayoran Baru">
+                                @error('district')
+                                    <p class="form-error">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label class="form-label">Kode Pos *</label>
+                                <input type="text" name="postal_code" value="{{ old('postal_code', $user->postal_code) }}" required class="form-input" placeholder="Contoh: 12120">
                                 @error('postal_code')
                                     <p class="form-error">{{ $message }}</p>
                                 @enderror
@@ -75,30 +109,36 @@
                         </div>
 
                         <div>
-                            <label class="form-label">Order Notes (Optional)</label>
-                            <textarea name="notes" rows="2" class="form-input" placeholder="Special instructions for your order">{{ old('notes') }}</textarea>
+                            <label class="form-label">Catatan Pesanan (Opsional)</label>
+                            <textarea name="notes" rows="2" class="form-input" placeholder="Contoh: Kirim sore hari, warna biru jika ada">{{ old('notes') }}</textarea>
                         </div>
                     </div>
                 </div>
 
                 <!-- Payment Method -->
                 <div class="bg-white rounded-lg p-6 shadow-sm border border-oat">
-                    <h2 class="font-serif text-2xl font-bold text-espresso mb-6">Payment Method</h2>
+                    <h2 class="font-serif text-2xl font-bold text-espresso mb-6">Metode Pembayaran</h2>
                     
                     <div class="space-y-3">
-                        <label class="flex items-start p-4 border-2 border-oat rounded-lg cursor-pointer hover:border-mocha transition">
+                        <label class="flex items-start p-4 border-2 border-oat rounded-lg cursor-pointer hover:border-mocha transition has-[:checked]:border-mocha has-[:checked]:bg-[#F5F0E8]">
                             <input type="radio" name="payment_method" value="bank_transfer" checked class="mt-1 text-mocha focus:ring-mocha">
                             <div class="ml-3">
-                                <p class="font-semibold text-espresso">Bank Transfer</p>
-                                <p class="text-sm text-sage mt-1">Transfer to our bank account and upload payment proof</p>
+                                <div class="flex items-center gap-2">
+                                    <iconify-icon icon="solar:card-bold" class="text-mocha" style="font-size: 1.5rem;"></iconify-icon>
+                                    <p class="font-semibold text-espresso">Bank Transfer</p>
+                                </div>
+                                <p class="text-sm text-sage mt-1">Transfer ke rekening toko dan upload bukti transfer</p>
                             </div>
                         </label>
 
-                        <label class="flex items-start p-4 border-2 border-oat rounded-lg cursor-pointer hover:border-mocha transition">
-                            <input type="radio" name="payment_method" value="cod" class="mt-1 text-mocha focus:ring-mocha">
+                        <label class="flex items-start p-4 border-2 border-oat rounded-lg cursor-pointer hover:border-mocha transition has-[:checked]:border-mocha has-[:checked]:bg-[#F5F0E8]">
+                            <input type="radio" name="payment_method" value="qris" class="mt-1 text-mocha focus:ring-mocha">
                             <div class="ml-3">
-                                <p class="font-semibold text-espresso">Cash on Delivery (COD)</p>
-                                <p class="text-sm text-sage mt-1">Pay when you receive your order</p>
+                                <div class="flex items-center gap-2">
+                                    <iconify-icon icon="solar:qr-code-bold" class="text-mocha" style="font-size: 1.5rem;"></iconify-icon>
+                                    <p class="font-semibold text-espresso">QRIS</p>
+                                </div>
+                                <p class="text-sm text-sage mt-1">Scan QRIS menggunakan aplikasi pembayaran dan upload bukti</p>
                             </div>
                         </label>
                     </div>
@@ -133,14 +173,15 @@
                             <span class="font-semibold">Rp {{ number_format($cart->getTotalAmount(), 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-espresso">Shipping</span>
-                            <span class="text-sage text-sm">Free</span>
+                            <span class="text-espresso">Ongkos Kirim</span>
+                            <span class="font-semibold text-mocha">Rp 15.000</span>
                         </div>
+                        <p class="text-xs text-sage mt-1">* Estimasi ongkir untuk wilayah Jabodetabek</p>
                     </div>
 
                     <div class="flex justify-between mb-6 text-lg pt-4 border-t border-oat">
-                        <span class="font-bold text-espresso">Total</span>
-                        <span class="font-bold text-mocha">Rp {{ number_format($cart->getTotalAmount(), 0, ',', '.') }}</span>
+                        <span class="font-bold text-espresso">Total Pembayaran</span>
+                        <span class="font-bold text-mocha">Rp {{ number_format($cart->getTotalAmount() + 15000, 0, ',', '.') }}</span>
                     </div>
 
                     <button type="submit" class="w-full btn-primary text-lg py-4">

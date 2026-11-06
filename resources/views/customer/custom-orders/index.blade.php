@@ -3,21 +3,21 @@
 @section('title', 'My Custom Requests')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#F5F0E8] via-white to-[#FFFFFF] py-12">
+<div class="min-h-screen bg-white py-12">
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4" data-aos="fade-down">
         <div>
             <h1 class="text-4xl font-serif font-bold text-[#947765] mb-3">My Custom Requests <iconify-icon icon="solar:star-bold" class="inline-block w-8 h-8"></iconify-icon></h1>
             <p class="text-[#947765]/80 text-lg">Track your custom order requests and negotiations</p>
         </div>
-        <a href="{{ route('customer.custom-orders.create') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] hover:from-[#F5F0E8] hover:to-[#DCCBBC] text-white rounded-full font-bold transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2">
+        <a href="{{ route('customer.custom-orders.create') }}" class="inline-flex items-center px-6 py-3 bg-[#DCCBBC] hover:bg-[#947765] text-[#342C28] hover:text-white rounded-full font-bold transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2">
             <i data-lucide="plus" class="w-5 h-5"></i>
             New Request
         </a>
     </div>
 
     @if(session('success'))
-    <div class="bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-300 text-green-800 px-6 py-4 rounded-2xl mb-8 shadow-lg" data-aos="fade-up">
+    <div class="bg-green-100 border-2 border-green-300 text-green-800 px-6 py-4 rounded-2xl mb-8 shadow-lg" data-aos="fade-up">
         <div class="flex items-start gap-3">
             <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
             <span>{{ session('success') }}</span>
@@ -35,13 +35,13 @@
                         <div class="flex flex-wrap items-center gap-3 mb-3">
                             <h3 class="text-xl font-serif font-bold text-[#947765]">{{ $customOrder->product_name }}</h3>
                             <span class="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide
-                                @if($customOrder->status === 'pending') bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800
-                                @elseif($customOrder->status === 'quoted') bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800
-                                @elseif($customOrder->status === 'negotiating') bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800
-                                @elseif($customOrder->status === 'accepted') bg-gradient-to-r from-green-100 to-green-200 text-green-800
-                                @elseif($customOrder->status === 'rejected') bg-gradient-to-r from-red-100 to-red-200 text-red-800
-                                @elseif($customOrder->status === 'cancelled') bg-gradient-to-r from-gray-100 to-gray-200 text-gray-600
-                                @elseif($customOrder->status === 'converted') bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800
+                                @if($customOrder->status === 'pending') bg-gray-200 text-gray-800
+                                @elseif($customOrder->status === 'quoted') bg-blue-200 text-blue-800
+                                @elseif($customOrder->status === 'negotiating') bg-yellow-200 text-yellow-800
+                                @elseif($customOrder->status === 'accepted') bg-green-200 text-green-800
+                                @elseif($customOrder->status === 'rejected') bg-red-200 text-red-800
+                                @elseif($customOrder->status === 'cancelled') bg-gray-200 text-gray-600
+                                @elseif($customOrder->status === 'converted') bg-purple-200 text-purple-800
                                 @endif">
                                 {{ ucfirst($customOrder->status) }}
                             </span>
@@ -101,7 +101,7 @@
                         @endif
                     </div>
 
-                    <a href="{{ route('customer.custom-orders.show', $customOrder) }}" class="inline-flex items-center px-6 py-3 border-2 border-[#F5F0E8] rounded-full text-[#947765] hover:border-[#DCCBBC] hover:bg-gradient-to-r hover:from-[#F5F0E8] hover:to-white transition-all duration-300 font-bold text-sm gap-2 hover:scale-105">
+                    <a href="{{ route('customer.custom-orders.show', $customOrder) }}" class="inline-flex items-center px-6 py-3 border-2 border-[#F5F0E8] rounded-full text-[#947765] hover:border-[#DCCBBC] hover:bg-[#F5F0E8] transition-all duration-300 font-bold text-sm gap-2 hover:scale-105">
                         View Details
                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </a>
@@ -112,12 +112,12 @@
     </div>
     @else
     <div class="bg-white rounded-3xl border-2 border-[#F5F0E8] p-16 text-center shadow-lg" data-aos="zoom-in">
-        <div class="w-24 h-24 bg-gradient-to-br from-[#F5F0E8] to-[#FFFFFF] rounded-full flex items-center justify-center mx-auto mb-6">
+        <div class="w-24 h-24 bg-[#F5F0E8] rounded-full flex items-center justify-center mx-auto mb-6">
             <i data-lucide="wand-2" class="w-12 h-12 text-[#DCCBBC]"></i>
         </div>
         <h3 class="text-2xl font-serif font-bold text-[#947765] mb-3">No custom requests yet</h3>
         <p class="text-[#947765]/70 mb-8 text-lg max-w-md mx-auto">Have a special design in mind? Create your first custom order request</p>
-        <a href="{{ route('customer.custom-orders.create') }}" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[#DCCBBC] to-[#F5F0E8] hover:from-[#F5F0E8] hover:to-[#DCCBBC] text-white rounded-full font-bold transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2">
+        <a href="{{ route('customer.custom-orders.create') }}" class="inline-flex items-center px-8 py-4 bg-[#DCCBBC] hover:bg-[#947765] text-[#342C28] hover:text-white rounded-full font-bold transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2">
             <i data-lucide="plus" class="w-5 h-5"></i>
             Create Custom Request
         </a>

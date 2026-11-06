@@ -95,6 +95,10 @@ Route::middleware(['auth', 'customer'])->group(function () {
     Route::post('/customer/orders/{id}/payment-proof', [CustomerOrderController::class, 'uploadPaymentProof'])->name('customer.orders.payment-proof');
     Route::patch('/customer/orders/{id}/cancel', [CustomerOrderController::class, 'cancel'])->name('customer.orders.cancel');
 
+    // Payment Upload
+    Route::get('/customer/payments/{order}/upload', [\App\Http\Controllers\Customer\PaymentController::class, 'upload'])->name('customer.payments.upload');
+    Route::post('/customer/payments/{order}/upload', [\App\Http\Controllers\Customer\PaymentController::class, 'store'])->name('customer.payments.store');
+
     // Profile
     Route::get('/customer/profile', [ProfileController::class, 'index'])->name('customer.profile');
     Route::patch('/customer/profile', [ProfileController::class, 'update'])->name('customer.profile.update');
@@ -121,8 +125,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Payment Verification
     Route::get('/payments', [PaymentVerificationController::class, 'index'])->name('payments.index');
     Route::get('/payments/{id}', [PaymentVerificationController::class, 'show'])->name('payments.show');
-    Route::patch('/payments/{id}/verify', [PaymentVerificationController::class, 'verify'])->name('payments.verify');
-    Route::patch('/payments/{id}/reject', [PaymentVerificationController::class, 'reject'])->name('payments.reject');
+    Route::post('/payments/{id}/verify', [PaymentVerificationController::class, 'verify'])->name('payments.verify');
+    Route::post('/payments/{id}/reject', [PaymentVerificationController::class, 'reject'])->name('payments.reject');
 
     // Customers Management
     Route::get('/customers', [CustomerManagementController::class, 'index'])->name('customers.index');
