@@ -1,0 +1,23 @@
+# Nixpacks configuration for Railway deployment
+# KNOTTED - Laravel 12 with PHP 8.5
+
+[phases.setup]
+nixPkgs = ["php85", "php85Extensions.mbstring", "php85Extensions.pdo", "php85Extensions.pdo_pgsql", "php85Extensions.bcmath", "php85Extensions.gd", "php85Extensions.zip", "php85Extensions.xml", "php85Extensions.curl", "php85Extensions.tokenizer", "php85Extensions.fileinfo", "php85Extensions.dom", "php85Extensions.simplexml"]
+
+[phases.install]
+cmds = [
+    "composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist"
+]
+
+[phases.build]
+cmds = [
+    "php artisan config:cache",
+    "php artisan route:cache",
+    "php artisan view:cache"
+]
+
+[start]
+cmd = "php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
+
+[variables]
+APP_ENV = "production"
