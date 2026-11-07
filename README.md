@@ -2,7 +2,8 @@
 
 ![KNOTTED](https://img.shields.io/badge/Laravel-12-red?style=for-the-badge&logo=laravel)
 ![PHP](https://img.shields.io/badge/PHP-8.5-blue?style=for-the-badge&logo=php)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-orange?style=for-the-badge&logo=mysql)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?style=for-the-badge&logo=postgresql)
+![Railway](https://img.shields.io/badge/Railway-Ready-purple?style=for-the-badge&logo=railway)
 
 **KNOTTED** adalah website e-commerce modern untuk produk handmade crochet dengan desain editorial yang elegan dan fitur lengkap untuk customer dan admin.
 
@@ -64,18 +65,58 @@
 ## 🛠️ Tech Stack
 
 - **Backend**: Laravel 12, PHP 8.5
-- **Database**: MySQL
+- **Database**: PostgreSQL (Supabase) / MySQL
 - **Frontend**: Blade Templates, Tailwind CSS v4
 - **Build Tools**: Vite
 - **Assets**: Custom CSS with brand colors
+- **Deployment**: Railway (PHP 8.5)
+
+## 🚀 Railway Deployment
+
+**Ready for production deployment on Railway.app**
+
+### Quick Deploy to Railway
+
+1. **Push to GitHub**
+```bash
+git push origin main
+```
+
+2. **Connect Railway**
+   - Go to [Railway.app](https://railway.app)
+   - Create new project → Connect GitHub repository
+   - Railway auto-detects Laravel via `nixpacks.toml`
+
+3. **Set Environment Variables**
+   - See `DEPLOYMENT.md` for complete list
+   - Required: `APP_KEY`, `APP_URL`, database credentials
+
+4. **Post-Deploy Commands**
+```bash
+php artisan migrate --force
+php artisan storage:link
+php artisan optimize
+```
+
+### Deployment Files
+- ✅ `nixpacks.toml` - Railway PHP 8.5 configuration
+- ✅ `Procfile` - Web process definition
+- ✅ `DEPLOYMENT.md` - Comprehensive deployment guide
+- ✅ `DEPLOYMENT_CHECKLIST.md` - Step-by-step checklist
+- ✅ `DEPLOYMENT_SUMMARY.md` - Deployment summary report
+
+### PHP Version
+- **Development**: PHP ^8.4 (tested on 8.5.12)
+- **Production (Railway)**: PHP 8.5
+- **Minimum**: PHP 8.4
 
 ## 📦 Installation
 
 ### Prerequisites
 ```bash
-- PHP >= 8.5
+- PHP >= 8.4 (recommended: 8.5)
 - Composer
-- MySQL >= 8.0
+- PostgreSQL >= 14 (or MySQL >= 8.0)
 - Node.js & NPM
 ```
 
