@@ -14,7 +14,7 @@ class CheckoutController extends Controller
 {
     public function index()
     {
-        $cart = auth()->user()->cart()->with('items.product')->first();
+        $cart = auth()->user()->cart()->with(['items.product.variations', 'items.variation'])->first();
         
         if (!$cart || $cart->items->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
@@ -42,7 +42,7 @@ class CheckoutController extends Controller
             'payment_method' => 'required|in:bank_transfer,qris',
         ]);
 
-        $cart = auth()->user()->cart()->with('items.product')->first();
+        $cart = auth()->user()->cart()->with(['items.product.variations', 'items.variation'])->first();
 
         if (!$cart || $cart->items->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
@@ -50,8 +50,16 @@ class CheckoutController extends Controller
 
         // Check stock availability
         foreach ($cart->items as $item) {
-            if ($item->quantity > $item->product->stock) {
-                return back()->with('error', "Not enough stock for {$item->product->name}");
+            $availableStock = $item->variation 
+                ? $item->variation->stock_quantity 
+                : $item->product->getTotalStock();
+                
+            if ($item->quantity > $availableStock) {
+                $itemName = $item->product->name;
+                if ($item->variation) {
+                    $itemName .= ' (Size: ' . $item->variation->size . ')';
+                }
+                return back()->with('error', "Not enough stock for {$itemName}");
             }
         }
 
@@ -68,7 +76,7 @@ class CheckoutController extends Controller
                 'subtotal' => $cart->getTotalAmount(),
                 'shipping_cost' => $shippingCost,
                 'total_amount' => $totalAmount,
-                'status' => 'pending',
+                'status' => 'pending_payment',
                 'payment_method' => $validated['payment_method'],
                 'payment_status' => 'pending',
                 'customer_name' => $validated['customer_name'],
@@ -89,15 +97,22 @@ class CheckoutController extends Controller
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
+                    'variation_id' => $item->variation_id,
                     'product_name' => $item->product->name,
+                    'sku_snapshot' => $item->variation ? $item->variation->getFullSku() : $item->product->sku,
+                    'size_snapshot' => $item->variation ? $item->variation->size : null,
                     'quantity' => $item->quantity,
                     'price' => $item->price,
                     'subtotal' => $item->price * $item->quantity,
                 ]);
 
-                // Reduce stock
-                $product = Product::find($item->product_id);
-                $product->decrement('stock', $item->quantity);
+                // Reduce stock from variation or product
+                if ($item->variation_id) {
+                    $item->variation->decrement('stock_quantity', $item->quantity);
+                } else {
+                    // For products without variations (deprecated flow)
+                    $item->product->decrement('stock', $item->quantity);
+                }
             }
 
             // Create payment record

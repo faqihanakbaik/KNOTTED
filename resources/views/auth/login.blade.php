@@ -38,8 +38,16 @@
 
                 <div>
                     <label for="password" class="form-label">Password</label>
-                    <input id="password" type="password" name="password" required 
-                           class="form-input" placeholder="Enter your password">
+                    <div class="relative">
+                        <input id="password" type="password" name="password" required 
+                               class="form-input pr-14" placeholder="Enter your password">
+                        <button type="button" onclick="togglePassword('password')" 
+                                class="absolute inset-y-0 right-0 px-3 flex items-center text-sage hover:text-espresso transition z-10 cursor-pointer border-l border-oat"
+                                style="pointer-events: auto;">
+                            <i data-lucide="eye" id="password-eye" class="w-5 h-5"></i>
+                            <i data-lucide="eye-off" id="password-eye-off" class="w-5 h-5 hidden"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="flex items-center justify-between">
@@ -95,4 +103,29 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    function togglePassword(fieldId) {
+        const passwordField = document.getElementById(fieldId);
+        const eyeIcon = document.getElementById(fieldId + '-eye');
+        const eyeOffIcon = document.getElementById(fieldId + '-eye-off');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            eyeIcon.classList.add('hidden');
+            eyeOffIcon.classList.remove('hidden');
+        } else {
+            passwordField.type = 'password';
+            eyeIcon.classList.remove('hidden');
+            eyeOffIcon.classList.add('hidden');
+        }
+    }
+
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
+@endpush
 @endsection

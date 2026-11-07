@@ -11,7 +11,7 @@
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 max-w-3xl">
     <form action="{{ route('admin.settings.update') }}" method="POST">
         @csrf
-        @method('PUT')
+        @method('PATCH')
 
         <!-- Bank Information -->
         <div class="mb-8">

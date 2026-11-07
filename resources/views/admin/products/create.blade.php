@@ -65,19 +65,20 @@
                 @enderror
             </div>
 
-            <!-- Stock -->
-            <div>
-                <label for="stock" class="block text-sm font-medium text-gray-700 mb-2">Stock Quantity *</label>
-                <input type="number" 
-                       id="stock" 
-                       name="stock" 
-                       value="{{ old('stock', 0) }}"
-                       min="0"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracotta focus:border-transparent"
-                       required>
-                @error('stock')
-                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                @enderror
+            <!-- Product Variations (Size & Stock) -->
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Product Variations (Size & Stock) *
+                </label>
+                <div id="variations-container" class="space-y-3">
+                    <!-- Variation template will be added here by JavaScript -->
+                </div>
+                <button type="button" 
+                        onclick="addVariation()" 
+                        class="mt-3 text-sm text-terracotta hover:text-espresso font-semibold">
+                    + Add Variation
+                </button>
+                <p class="text-gray-500 text-xs mt-1">Add sizes and stock quantities (e.g., Small, Medium, Large or One Size)</p>
             </div>
 
             <!-- Product Image -->
@@ -156,6 +157,56 @@
 </div>
 
 <script>
+    let variationIndex = 0;
+
+    // Add first variation on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        addVariation();
+    });
+
+    function addVariation() {
+        const container = document.getElementById('variations-container');
+        const variationHtml = `
+            <div class="variation-row flex gap-3 items-start" data-index="${variationIndex}">
+                <div class="flex-1">
+                    <input type="text" 
+                           name="variations[${variationIndex}][size]" 
+                           placeholder="Size (e.g., Small, Medium, One Size)"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracotta focus:border-transparent"
+                           required>
+                </div>
+                <div class="w-32">
+                    <input type="number" 
+                           name="variations[${variationIndex}][stock_quantity]" 
+                           placeholder="Stock"
+                           min="0"
+                           value="0"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracotta focus:border-transparent"
+                           required>
+                </div>
+                <button type="button" 
+                        onclick="removeVariation(this)" 
+                        class="px-3 py-2 text-red-600 hover:text-red-800 font-semibold">
+                    Remove
+                </button>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', variationHtml);
+        variationIndex++;
+    }
+
+    function removeVariation(button) {
+        const variationsContainer = document.getElementById('variations-container');
+        const variationRows = variationsContainer.querySelectorAll('.variation-row');
+        
+        // Keep at least one variation
+        if (variationRows.length > 1) {
+            button.closest('.variation-row').remove();
+        } else {
+            alert('At least one variation is required');
+        }
+    }
+
     function previewImage(event) {
         const preview = document.getElementById('imagePreview');
         const previewImg = document.getElementById('previewImg');

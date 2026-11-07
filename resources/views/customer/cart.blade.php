@@ -24,9 +24,26 @@
                                         {{ $item->product->name }}
                                     </a>
                                 </h3>
-                                <p class="text-sm text-sage mb-3">{{ $item->product->category->name }}</p>
+                                <p class="text-sm text-sage mb-1">{{ $item->product->category->name }}</p>
+                                
+                                @if($item->variation)
+                                    <p class="text-sm text-mocha font-medium mb-3">
+                                        <span class="inline-flex items-center">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                                            </svg>
+                                            Size: {{ $item->variation->size }}
+                                        </span>
+                                    </p>
+                                @else
+                                    <div class="mb-3"></div>
+                                @endif
+
                                 <p class="text-mocha font-semibold text-lg mb-4">
                                     Rp {{ number_format($item->price, 0, ',', '.') }}
+                                    @if($item->variation && $item->variation->price_adjustment != 0)
+                                        <span class="text-xs text-sage">(+Rp {{ number_format($item->variation->price_adjustment, 0, ',', '.') }})</span>
+                                    @endif
                                 </p>
 
                                 <div class="flex items-center gap-4">
@@ -34,8 +51,13 @@
                                         @csrf
                                         @method('PATCH')
                                         <label class="text-sm text-espresso">Qty:</label>
+                                        @php
+                                            $maxStock = $item->variation 
+                                                ? $item->variation->stock_quantity 
+                                                : $item->product->getTotalStock();
+                                        @endphp
                                         <input type="number" name="quantity" value="{{ $item->quantity }}" 
-                                               min="1" max="{{ $item->product->stock }}" 
+                                               min="1" max="{{ $maxStock }}" 
                                                class="w-16 px-2 py-1 border-2 border-oat rounded text-center focus:border-mocha">
                                         <button type="submit" class="text-sm text-mocha hover:text-espresso font-semibold">Update</button>
                                     </form>
@@ -52,6 +74,7 @@
                                 <p class="font-bold text-xl text-espresso">
                                     Rp {{ number_format($item->getSubtotal(), 0, ',', '.') }}
                                 </p>
+                                <p class="text-xs text-sage mt-1">{{ $item->quantity }} x Rp {{ number_format($item->price, 0, ',', '.') }}</p>
                             </div>
                         </div>
                     @endforeach

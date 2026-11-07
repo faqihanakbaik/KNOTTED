@@ -36,10 +36,23 @@ class OrderManagementController extends Controller
         $order = Order::findOrFail($id);
 
         $validated = $request->validate([
-            'status' => 'required|in:pending,processing,shipped,completed,cancelled',
+            'status' => 'required|in:pending_payment,verifying_payment,processing,shipping,completed,cancelled,payment_failed',
         ]);
 
         $order->update(['status' => $validated['status']]);
+
+        // If marked as completed, set completed_at timestamp
+        if ($validated['status'] === 'completed' && !$order->completed_at) {
+            $order->update(['completed_at' => now()]);
+        }
+
+        // If marked as cancelled, set cancelled_at timestamp
+        if ($validated['status'] === 'cancelled' && !$order->cancelled_at) {
+            $order->update([
+                'cancelled_at' => now(),
+                'cancelled_by' => auth()->id(),
+            ]);
+        }
 
         return back()->with('success', 'Order status updated successfully!');
     }

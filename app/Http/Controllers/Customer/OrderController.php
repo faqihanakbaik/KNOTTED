@@ -11,7 +11,7 @@ class OrderController extends Controller
     public function index()
     {
         $orders = auth()->user()->orders()
-            ->with('items.product')
+            ->with(['items.product', 'items.variation'])
             ->latest()
             ->paginate(10);
 
@@ -21,7 +21,7 @@ class OrderController extends Controller
     public function show($id)
     {
         $order = auth()->user()->orders()
-            ->with(['items.product', 'payment'])
+            ->with(['items.product', 'items.variation', 'payment'])
             ->findOrFail($id);
 
         return view('customer.orders.show', compact('order'));
@@ -59,19 +59,31 @@ class OrderController extends Controller
 
     public function cancel($id)
     {
-        $order = auth()->user()->orders()->findOrFail($id);
+        $order = auth()->user()->orders()
+            ->with(['items.product', 'items.variation'])
+            ->findOrFail($id);
 
-        if (!$order->isPending()) {
-            return back()->with('error', 'Only pending orders can be cancelled.');
+        // Only allow cancel if payment is pending
+        if ($order->payment_status !== 'pending' && $order->payment_status !== 'rejected') {
+            return back()->with('error', 'Only orders with pending payment can be cancelled.');
         }
 
-        $order->update(['status' => 'cancelled']);
+        $order->update([
+            'status' => 'cancelled',
+            'payment_status' => 'cancelled'
+        ]);
 
         // Restore stock
         foreach ($order->items as $item) {
-            $item->product->increment('stock', $item->quantity);
+            if ($item->variation_id) {
+                // Restore variation stock
+                $item->variation->increment('stock_quantity', $item->quantity);
+            } else {
+                // Restore product stock (deprecated flow)
+                $item->product->increment('stock', $item->quantity);
+            }
         }
 
-        return back()->with('success', 'Order cancelled successfully.');
+        return back()->with('success', 'Order cancelled successfully. Stock has been restored.');
     }
 }

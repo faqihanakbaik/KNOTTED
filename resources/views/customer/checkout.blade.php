@@ -158,7 +158,10 @@
                             <div class="flex justify-between items-start">
                                 <div class="flex-1">
                                     <p class="font-semibold text-espresso text-sm">{{ $item->product->name }}</p>
-                                    <p class="text-xs text-sage">Qty: {{ $item->quantity }}</p>
+                                    @if($item->variation)
+                                        <p class="text-xs text-mocha">Size: {{ $item->variation->size }}</p>
+                                    @endif
+                                    <p class="text-xs text-sage">Qty: {{ $item->quantity }} x Rp {{ number_format($item->price, 0, ',', '.') }}</p>
                                 </div>
                                 <p class="text-sm font-semibold text-mocha">
                                     Rp {{ number_format($item->getSubtotal(), 0, ',', '.') }}

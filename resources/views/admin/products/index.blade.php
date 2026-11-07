@@ -36,12 +36,22 @@
                     <td>{{ $product->category->name }}</td>
                     <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
                     <td>
-                        <span class="@if($product->stock <= 5) text-red-600 font-bold @endif">
-                            {{ $product->stock }}
+                        @php
+                            $totalStock = $product->variations->sum('stock_quantity');
+                        @endphp
+                        <span class="@if($totalStock <= 5) text-red-600 font-bold @endif">
+                            {{ $totalStock }}
                         </span>
+                        @if($product->variations->count() > 0)
+                            <p class="text-xs text-gray-500">
+                                @foreach($product->variations as $v)
+                                    {{ $v->size }}: {{ $v->stock_quantity }}@if(!$loop->last), @endif
+                                @endforeach
+                            </p>
+                        @endif
                     </td>
                     <td>
-                        @if($product->is_active && $product->stock > 0)
+                        @if($product->is_active && $product->variations->sum('stock_quantity') > 0)
                             <span class="badge badge-completed">Available</span>
                         @else
                             <span class="badge badge-cancelled">Unavailable</span>

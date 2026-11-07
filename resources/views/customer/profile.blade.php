@@ -100,7 +100,15 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="form-label">Current Password</label>
-                                <input type="password" name="current_password" required class="form-input">
+                                <div class="relative">
+                                    <input id="current_password" type="password" name="current_password" required class="form-input pr-14">
+                                    <button type="button" onclick="togglePassword('current_password')" 
+                                            class="absolute inset-y-0 right-0 px-3 flex items-center text-sage hover:text-espresso transition z-10 cursor-pointer border-l border-oat"
+                                            style="pointer-events: auto;">
+                                        <i data-lucide="eye" id="current_password-eye" class="w-5 h-5"></i>
+                                        <i data-lucide="eye-off" id="current_password-eye-off" class="w-5 h-5 hidden"></i>
+                                    </button>
+                                </div>
                                 @error('current_password')
                                     <p class="form-error">{{ $message }}</p>
                                 @enderror
@@ -108,7 +116,15 @@
 
                             <div>
                                 <label class="form-label">New Password</label>
-                                <input type="password" name="password" required class="form-input">
+                                <div class="relative">
+                                    <input id="new_password" type="password" name="password" required class="form-input pr-14">
+                                    <button type="button" onclick="togglePassword('new_password')" 
+                                            class="absolute inset-y-0 right-0 px-3 flex items-center text-sage hover:text-espresso transition z-10 cursor-pointer border-l border-oat"
+                                            style="pointer-events: auto;">
+                                        <i data-lucide="eye" id="new_password-eye" class="w-5 h-5"></i>
+                                        <i data-lucide="eye-off" id="new_password-eye-off" class="w-5 h-5 hidden"></i>
+                                    </button>
+                                </div>
                                 @error('password')
                                     <p class="form-error">{{ $message }}</p>
                                 @enderror
@@ -116,7 +132,15 @@
 
                             <div>
                                 <label class="form-label">Confirm New Password</label>
-                                <input type="password" name="password_confirmation" required class="form-input">
+                                <div class="relative">
+                                    <input id="password_confirmation" type="password" name="password_confirmation" required class="form-input pr-14">
+                                    <button type="button" onclick="togglePassword('password_confirmation')" 
+                                            class="absolute inset-y-0 right-0 px-3 flex items-center text-sage hover:text-espresso transition z-10 cursor-pointer border-l border-oat"
+                                            style="pointer-events: auto;">
+                                        <i data-lucide="eye" id="password_confirmation-eye" class="w-5 h-5"></i>
+                                        <i data-lucide="eye-off" id="password_confirmation-eye-off" class="w-5 h-5 hidden"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -127,4 +151,29 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    function togglePassword(fieldId) {
+        const passwordField = document.getElementById(fieldId);
+        const eyeIcon = document.getElementById(fieldId + '-eye');
+        const eyeOffIcon = document.getElementById(fieldId + '-eye-off');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            eyeIcon.classList.add('hidden');
+            eyeOffIcon.classList.remove('hidden');
+        } else {
+            passwordField.type = 'password';
+            eyeIcon.classList.remove('hidden');
+            eyeOffIcon.classList.add('hidden');
+        }
+    }
+
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
+@endpush
 @endsection

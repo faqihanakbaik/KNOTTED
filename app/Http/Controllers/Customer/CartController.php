@@ -12,7 +12,7 @@ class CartController extends Controller
 {
     public function index()
     {
-        $cart = auth()->user()->cart()->with('items.product')->first();
+        $cart = auth()->user()->cart()->with(['items.product.category', 'items.variation'])->first();
         
         if (!$cart) {
             $cart = Cart::create(['user_id' => auth()->id()]);
@@ -25,16 +25,37 @@ class CartController extends Controller
     {
         $request->validate([
             'product_id' => 'required|exists:products,id',
+            'variation_id' => 'nullable|exists:product_variations,id',
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $product = Product::findOrFail($request->product_id);
+        $product = Product::with('variations')->findOrFail($request->product_id);
 
         if (!$product->isInStock()) {
             return back()->with('error', 'Product is out of stock.');
         }
 
-        if ($request->quantity > $product->stock) {
+        // Check variation stock if variation is selected
+        $variation = null;
+        $availableStock = $product->getTotalStock();
+        $price = $product->price;
+
+        if ($request->variation_id) {
+            $variation = $product->variations()->find($request->variation_id);
+            
+            if (!$variation) {
+                return back()->with('error', 'Invalid product variation.');
+            }
+
+            if ($variation->stock_quantity <= 0) {
+                return back()->with('error', 'Selected variation is out of stock.');
+            }
+
+            $availableStock = $variation->stock_quantity;
+            $price = $product->price + $variation->price_adjustment;
+        }
+
+        if ($request->quantity > $availableStock) {
             return back()->with('error', 'Not enough stock available.');
         }
 
@@ -43,11 +64,15 @@ class CartController extends Controller
             $cart = Cart::create(['user_id' => auth()->id()]);
         }
 
-        $cartItem = $cart->items()->where('product_id', $product->id)->first();
+        // Check for existing cart item with same product and variation
+        $cartItem = $cart->items()
+            ->where('product_id', $product->id)
+            ->where('variation_id', $request->variation_id)
+            ->first();
 
         if ($cartItem) {
             $newQuantity = $cartItem->quantity + $request->quantity;
-            if ($newQuantity > $product->stock) {
+            if ($newQuantity > $availableStock) {
                 return back()->with('error', 'Not enough stock available.');
             }
             $cartItem->update(['quantity' => $newQuantity]);
@@ -55,8 +80,9 @@ class CartController extends Controller
             CartItem::create([
                 'cart_id' => $cart->id,
                 'product_id' => $product->id,
+                'variation_id' => $request->variation_id,
                 'quantity' => $request->quantity,
-                'price' => $product->price,
+                'price' => $price,
             ]);
         }
 
@@ -69,14 +95,20 @@ class CartController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $cartItem = CartItem::findOrFail($id);
+        $cartItem = CartItem::with(['product.variations', 'variation'])->findOrFail($id);
         
         // Check if this cart item belongs to the authenticated user
         if ($cartItem->cart->user_id !== auth()->id()) {
             abort(403);
         }
 
-        if ($request->quantity > $cartItem->product->stock) {
+        // Check stock availability
+        $availableStock = $cartItem->product->getTotalStock();
+        if ($cartItem->variation_id) {
+            $availableStock = $cartItem->variation->stock_quantity;
+        }
+
+        if ($request->quantity > $availableStock) {
             return back()->with('error', 'Not enough stock available.');
         }
 

@@ -18,7 +18,7 @@ class ProductManagementController extends Controller
     }
     public function index()
     {
-        $products = Product::with('category')->latest()->paginate(20);
+        $products = Product::with(['category', 'variations'])->latest()->paginate(20);
         return view('admin.products.index', compact('products'));
     }
 
@@ -35,10 +35,13 @@ class ProductManagementController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048', // REQUIRED for create
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
+            // Variations (sizes and stock)
+            'variations' => 'nullable|array',
+            'variations.*.size' => 'required|string|max:50',
+            'variations.*.stock_quantity' => 'required|integer|min:0',
         ]);
 
         // Try Supabase first, fallback to local if fails
@@ -46,31 +49,46 @@ class ProductManagementController extends Controller
         $uploadResult = $this->storage->upload($request->file('image'), $bucket, 'products');
 
         if ($uploadResult['success']) {
-            // Supabase success - store URL
             $validated['image'] = $uploadResult['url'];
         } else {
-            // Fallback to local storage
             \Log::warning('Supabase upload failed, using local storage', ['error' => $uploadResult['error']]);
             
             $file = $request->file('image');
             $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('images/products'), $filename);
             
-            // Store as asset URL format
             $validated['image'] = asset('images/products/' . $filename);
         }
 
         $validated['is_featured'] = $request->has('is_featured');
         $validated['is_active'] = $request->has('is_active');
 
-        Product::create($validated);
+        $product = Product::create($validated);
+
+        // Create product variations if provided
+        if ($request->has('variations') && is_array($request->variations)) {
+            foreach ($request->variations as $variation) {
+                if (!empty($variation['size']) && isset($variation['stock_quantity'])) {
+                    $product->variations()->create([
+                        'size' => $variation['size'],
+                        'stock_quantity' => $variation['stock_quantity'],
+                    ]);
+                }
+            }
+        } else {
+            // Create default "One Size" variation if no variations provided
+            $product->variations()->create([
+                'size' => 'One Size',
+                'stock_quantity' => 0,
+            ]);
+        }
 
         return redirect()->route('admin.products.index')->with('success', 'Product created successfully!');
     }
 
     public function edit(string $id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with('variations')->findOrFail($id);
         $categories = Category::all();
         return view('admin.products.edit', compact('product', 'categories'));
     }
@@ -84,26 +102,26 @@ class ProductManagementController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
+            // Variations
+            'variations' => 'nullable|array',
+            'variations.*.id' => 'nullable|exists:product_variations,id',
+            'variations.*.size' => 'required|string|max:50',
+            'variations.*.stock_quantity' => 'required|integer|min:0',
         ]);
 
         // Handle image upload if new image provided
         if ($request->hasFile('image')) {
             $bucket = config('services.supabase.buckets.products');
             
-            // Try upload to Supabase
             $uploadResult = $this->storage->upload($request->file('image'), $bucket, 'products');
 
             if ($uploadResult['success']) {
-                // Supabase success
-                // Delete old image if it was also on Supabase
                 if ($product->image && str_contains($product->image, 'supabase.co')) {
                     $this->deleteImageFromUrl($product->image, $bucket);
                 } elseif ($product->image) {
-                    // Delete old local image
                     $oldPath = public_path('images/products/' . basename($product->image));
                     if (file_exists($oldPath)) {
                         unlink($oldPath);
@@ -112,10 +130,8 @@ class ProductManagementController extends Controller
                 
                 $validated['image'] = $uploadResult['url'];
             } else {
-                // Fallback to local storage
                 \Log::warning('Supabase upload failed, using local storage', ['error' => $uploadResult['error']]);
                 
-                // Delete old local image
                 if ($product->image && !str_contains($product->image, 'supabase.co')) {
                     $oldPath = public_path('images/products/' . basename($product->image));
                     if (file_exists($oldPath)) {
@@ -135,6 +151,37 @@ class ProductManagementController extends Controller
         $validated['is_active'] = $request->has('is_active');
 
         $product->update($validated);
+
+        // Update variations
+        if ($request->has('variations') && is_array($request->variations)) {
+            $existingVariationIds = [];
+            
+            foreach ($request->variations as $variationData) {
+                if (isset($variationData['id'])) {
+                    // Update existing variation
+                    $variation = $product->variations()->find($variationData['id']);
+                    if ($variation) {
+                        $variation->update([
+                            'size' => $variationData['size'],
+                            'stock_quantity' => $variationData['stock_quantity'],
+                        ]);
+                        $existingVariationIds[] = $variation->id;
+                    }
+                } else {
+                    // Create new variation
+                    if (!empty($variationData['size']) && isset($variationData['stock_quantity'])) {
+                        $newVariation = $product->variations()->create([
+                            'size' => $variationData['size'],
+                            'stock_quantity' => $variationData['stock_quantity'],
+                        ]);
+                        $existingVariationIds[] = $newVariation->id;
+                    }
+                }
+            }
+            
+            // Delete variations that were removed
+            $product->variations()->whereNotIn('id', $existingVariationIds)->delete();
+        }
 
         return redirect()->route('admin.products.index')->with('success', 'Product updated successfully!');
     }

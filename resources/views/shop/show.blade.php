@@ -18,12 +18,27 @@
 
         <!-- Product Detail -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-            <!-- Product Image -->
-            <div class="bg-white rounded-lg overflow-hidden shadow-sm border border-oat">
-                @if($product->image)
-                    <img src="{{ $product->image }}" alt="{{ $product->name }}" class="w-full h-auto" onerror="this.src='https://via.placeholder.com/800x800/F5F0E8/342C28?text={{ urlencode($product->name) }}'">
-                @else
-                    <img src="https://via.placeholder.com/800x800/F5F0E8/342C28?text={{ urlencode($product->name) }}" alt="{{ $product->name }}" class="w-full h-auto">
+            <!-- Product Images Gallery -->
+            <div>
+                <!-- Main Image -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-sm border border-oat mb-4">
+                    @if($product->image)
+                        <img id="main-product-image" src="{{ $product->image }}" alt="{{ $product->name }}" class="w-full h-auto" onerror="this.src='https://via.placeholder.com/800x800/F5F0E8/342C28?text={{ urlencode($product->name) }}'">
+                    @else
+                        <img id="main-product-image" src="https://via.placeholder.com/800x800/F5F0E8/342C28?text={{ urlencode($product->name) }}" alt="{{ $product->name }}" class="w-full h-auto">
+                    @endif
+                </div>
+
+                <!-- Thumbnail Gallery -->
+                @if($product->productImages && $product->productImages->count() > 0)
+                    <div class="grid grid-cols-4 gap-2">
+                        @foreach($product->productImages as $image)
+                            <div class="bg-white rounded-lg overflow-hidden shadow-sm border border-oat cursor-pointer hover:border-sage transition"
+                                 onclick="changeMainImage('{{ $image->image_url }}')">
+                                <img src="{{ $image->image_url }}" alt="Product image" class="w-full h-24 object-cover">
+                            </div>
+                        @endforeach
+                    </div>
                 @endif
             </div>
 
@@ -51,18 +66,44 @@
                 </div>
 
                 <div class="mb-6 pb-6 border-b border-oat">
-                    <div class="flex items-center space-x-4 text-sm">
+                    <div class="space-y-3 text-sm">
+                        <!-- Product Type -->
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-sage mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="text-espresso">
+                                @if($product->isMadeToOrder())
+                                    <span class="font-semibold">Made to Order</span> ({{ $product->lead_time_days }} days lead time)
+                                @else
+                                    <span class="font-semibold">Ready Stock</span>
+                                @endif
+                            </span>
+                        </div>
+
+                        <!-- Stock Status -->
                         <div class="flex items-center">
                             <svg class="w-5 h-5 text-sage mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                             </svg>
                             <span class="text-espresso">
                                 @if($product->isInStock())
-                                    <span class="font-semibold text-green-600">In Stock</span> ({{ $product->stock }} available)
+                                    <span class="font-semibold text-green-600">In Stock</span> 
+                                    @if(!$product->isMadeToOrder())
+                                        ({{ $product->getTotalStock() }} available)
+                                    @endif
                                 @else
                                     <span class="font-semibold text-red-600">Out of Stock</span>
                                 @endif
                             </span>
+                        </div>
+
+                        <!-- SKU -->
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-sage mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+                            </svg>
+                            <span class="text-espresso">SKU: <span class="font-semibold">{{ $product->sku }}</span></span>
                         </div>
                     </div>
                 </div>
@@ -79,12 +120,46 @@
                                 @csrf
                                 <input type="hidden" name="product_id" value="{{ $product->id }}">
                                 
+                                <!-- Variation Selector -->
+                                @if($product->variations && $product->variations->count() > 0)
+                                    <div>
+                                        <label class="form-label">Select Size/Variation <span class="text-red-500">*</span></label>
+                                        <select name="variation_id" id="variation-selector" required class="form-input">
+                                            <option value="">Choose a variation</option>
+                                            @foreach($product->variations as $variation)
+                                                <option value="{{ $variation->id }}" 
+                                                        data-stock="{{ $variation->stock_quantity }}"
+                                                        data-price="{{ $variation->price_adjustment }}"
+                                                        {{ $variation->stock_quantity <= 0 ? 'disabled' : '' }}>
+                                                    {{ $variation->size }} 
+                                                    @if($variation->price_adjustment != 0)
+                                                        (+Rp {{ number_format($variation->price_adjustment, 0, ',', '.') }})
+                                                    @endif
+                                                    - {{ $variation->stock_quantity > 0 ? $variation->stock_quantity . ' in stock' : 'Out of stock' }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+
+                                <!-- Quantity -->
                                 <div>
                                     <label class="form-label">Quantity</label>
                                     <div class="flex items-center space-x-4">
-                                        <input type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}" 
+                                        <input type="number" name="quantity" id="quantity-input" value="1" min="1" 
+                                               max="{{ $product->getTotalStock() }}" 
                                                class="form-input w-24 text-center">
-                                        <span class="text-sm text-sage">Max: {{ $product->stock }}</span>
+                                        <span class="text-sm text-sage">Max: <span id="max-quantity">{{ $product->getTotalStock() }}</span></span>
+                                    </div>
+                                </div>
+
+                                <!-- Total Price Display -->
+                                <div class="bg-sage/10 rounded-lg p-4">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-espresso font-medium">Total Price:</span>
+                                        <span class="text-2xl font-bold text-mocha" id="total-price">
+                                            Rp {{ number_format($product->price, 0, ',', '.') }}
+                                        </span>
                                     </div>
                                 </div>
 
@@ -135,4 +210,69 @@
         @endif
     </div>
 </div>
+
+@push('scripts')
+<script>
+    // Change main product image
+    function changeMainImage(imageUrl) {
+        document.getElementById('main-product-image').src = imageUrl;
+    }
+
+    // Variation selector logic
+    const variationSelector = document.getElementById('variation-selector');
+    const quantityInput = document.getElementById('quantity-input');
+    const maxQuantitySpan = document.getElementById('max-quantity');
+    const totalPriceSpan = document.getElementById('total-price');
+    const basePrice = {{ $product->price }};
+
+    if (variationSelector) {
+        variationSelector.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const stock = parseInt(selectedOption.dataset.stock) || 0;
+            const priceAdjustment = parseFloat(selectedOption.dataset.price) || 0;
+            
+            // Update max quantity
+            maxQuantitySpan.textContent = stock;
+            quantityInput.max = stock;
+            
+            // Reset quantity if exceeds new max
+            if (parseInt(quantityInput.value) > stock) {
+                quantityInput.value = stock > 0 ? 1 : 0;
+            }
+            
+            // Update total price
+            updateTotalPrice();
+        });
+    }
+
+    if (quantityInput) {
+        quantityInput.addEventListener('input', function() {
+            updateTotalPrice();
+        });
+    }
+
+    function updateTotalPrice() {
+        let price = basePrice;
+        const quantity = parseInt(quantityInput.value) || 1;
+        
+        // Add variation price adjustment if selected
+        if (variationSelector) {
+            const selectedOption = variationSelector.options[variationSelector.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                const priceAdjustment = parseFloat(selectedOption.dataset.price) || 0;
+                price += priceAdjustment;
+            }
+        }
+        
+        const totalPrice = price * quantity;
+        totalPriceSpan.textContent = 'Rp ' + totalPrice.toLocaleString('id-ID');
+    }
+
+    // Initialize Lucide icons if available
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
+@endpush
+
 @endsection

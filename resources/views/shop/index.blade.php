@@ -13,49 +13,84 @@
 
         <!-- Filters -->
         <div class="bg-white rounded-lg shadow-sm border border-oat p-6 mb-8">
-            <form method="GET" action="{{ route('shop.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <!-- Search -->
-                <div>
-                    <label class="form-label">Search</label>
-                    <input type="text" name="search" value="{{ request('search') }}" 
-                           placeholder="Search products..." class="form-input">
+            <form method="GET" action="{{ route('shop.index') }}" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <!-- Search -->
+                    <div>
+                        <label class="form-label">Search</label>
+                        <input type="text" name="search" value="{{ request('search') }}" 
+                               placeholder="Search products..." class="form-input">
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div>
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-input">
+                            <option value="">All Categories</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }} ({{ $category->products_count }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Sort -->
+                    <div>
+                        <label class="form-label">Sort By</label>
+                        <select name="sort" class="form-input">
+                            <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
+                            <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Price: Low to High</option>
+                            <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Price: High to Low</option>
+                            <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>Name: A-Z</option>
+                        </select>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="flex items-end">
+                        <button type="submit" class="w-full btn-primary">
+                            Apply Filters
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Category Filter -->
-                <div>
-                    <label class="form-label">Category</label>
-                    <select name="category" class="form-input">
-                        <option value="">All Categories</option>
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                                {{ $category->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Sort -->
-                <div>
-                    <label class="form-label">Sort By</label>
-                    <select name="sort" class="form-input">
-                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
-                        <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Price: Low to High</option>
-                        <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Price: High to Low</option>
-                        <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>Name: A-Z</option>
-                    </select>
-                </div>
-
-                <!-- Submit -->
-                <div class="flex items-end">
-                    <button type="submit" class="w-full btn-primary">
-                        Apply Filters
-                    </button>
+                <!-- Price Range -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 border-t border-oat">
+                    <div>
+                        <label class="form-label">Min Price (Rp)</label>
+                        <input type="number" name="min_price" value="{{ request('min_price') }}" 
+                               placeholder="0" min="0" step="1000" class="form-input">
+                    </div>
+                    <div>
+                        <label class="form-label">Max Price (Rp)</label>
+                        <input type="number" name="max_price" value="{{ request('max_price') }}" 
+                               placeholder="1000000" min="0" step="1000" class="form-input">
+                    </div>
+                    <div class="flex items-end">
+                        <a href="{{ route('shop.index') }}" class="w-full text-center btn-secondary">
+                            Clear Filters
+                        </a>
+                    </div>
                 </div>
             </form>
         </div>
 
         <!-- Products Grid -->
         @if($products->count() > 0)
+            <!-- Results Count -->
+            <div class="mb-6 flex items-center justify-between">
+                <p class="text-mocha">
+                    Showing <span class="font-semibold text-espresso">{{ $products->firstItem() }}</span> to 
+                    <span class="font-semibold text-espresso">{{ $products->lastItem() }}</span> of 
+                    <span class="font-semibold text-espresso">{{ $products->total() }}</span> products
+                </p>
+                @if(request()->hasAny(['search', 'category', 'min_price', 'max_price']))
+                    <a href="{{ route('shop.index') }}" class="text-sage hover:text-mocha text-sm font-medium transition">
+                        <i data-lucide="x" class="w-4 h-4 inline-block"></i> Clear all filters
+                    </a>
+                @endif
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
                 @foreach($products as $product)
                     <div class="product-card">
@@ -82,22 +117,20 @@
                                 Rp {{ number_format($product->price, 0, ',', '.') }}
                             </p>
                             <p class="text-sm text-sage mb-4">
-                                Stock: {{ $product->stock }} {{ $product->stock > 1 ? 'items' : 'item' }}
+                                @if($product->isMadeToOrder())
+                                    <span class="inline-flex items-center">
+                                        <i data-lucide="clock" class="w-4 h-4 mr-1"></i>
+                                        Made to Order ({{ $product->lead_time_days }} days)
+                                    </span>
+                                @else
+                                    Stock: {{ $product->getTotalStock() }} {{ $product->getTotalStock() > 1 ? 'items' : 'item' }}
+                                @endif
                             </p>
                             @auth
                                 @if(!auth()->user()->isAdmin())
-                                    <form action="{{ route('cart.add') }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                        <input type="hidden" name="quantity" value="1">
-                                        <button type="submit" class="w-full btn-primary" @if(!$product->isInStock()) disabled @endif>
-                                            @if($product->isInStock())
-                                                Add to Cart
-                                            @else
-                                                Out of Stock
-                                            @endif
-                                        </button>
-                                    </form>
+                                    <a href="{{ route('product.show', $product->slug) }}" class="block w-full text-center btn-primary">
+                                        View Product
+                                    </a>
                                 @endif
                             @else
                                 <a href="{{ route('login') }}" class="block w-full text-center btn-primary">
@@ -111,7 +144,7 @@
 
             <!-- Pagination -->
             <div class="mt-8">
-                {{ $products->links() }}
+                {{ $products->appends(request()->query())->links() }}
             </div>
         @else
             <div class="text-center py-20">

@@ -10,7 +10,7 @@ class ShopController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with('category')->available();
+        $query = Product::with(['category', 'variations'])->inStock();
 
         // Category filter
         if ($request->has('category') && $request->category != '') {
@@ -19,7 +19,12 @@ class ShopController extends Controller
 
         // Search
         if ($request->has('search') && $request->search != '') {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('description', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('sku', 'like', '%' . $searchTerm . '%');
+            });
         }
 
         // Price filter
@@ -47,7 +52,11 @@ class ShopController extends Controller
         }
 
         $products = $query->paginate(12);
-        $categories = Category::all();
+        $categories = Category::withCount(['products' => function($q) {
+            $q->whereHas('variations', function($v) {
+                $v->where('stock_quantity', '>', 0);
+            })->where('is_active', true);
+        }])->get();
 
         return view('shop.index', compact('products', 'categories'));
     }

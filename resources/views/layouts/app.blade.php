@@ -26,7 +26,7 @@
                 </a>
 
                 <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center space-x-6">
+                <div class="hidden md:flex items-center gap-10 lg:gap-16">
                     <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
                     <div class="relative group">
                         <button class="nav-link flex items-center gap-1">
@@ -49,7 +49,7 @@
                 </div>
 
                 <!-- Right Navigation -->
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center gap-6">
                     <!-- Search Icon -->
                     <button class="text-espresso hover:text-mocha transition">
                         <i data-lucide="search" class="w-5 h-5"></i>

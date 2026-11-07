@@ -60,6 +60,27 @@ class Product extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    // Accessor for image attribute
+    public function getImageAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+
+        // If it's already a full URL (http/https), return as is
+        if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
+            return $value;
+        }
+
+        // If it starts with /, it's already a path from public root
+        if (str_starts_with($value, '/')) {
+            return $value;
+        }
+
+        // Otherwise, prepend /images/products/ for backwards compatibility
+        return '/images/products/' . $value;
+    }
+
     // Helper methods
     public function isInStock()
     {

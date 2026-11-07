@@ -155,7 +155,16 @@
                                 @endif
                                 <div class="flex-1">
                                     <p class="font-semibold text-espresso">{{ $item->product_name }}</p>
-                                    <p class="text-sm text-gray-500">Quantity: {{ $item->quantity }}</p>
+                                    @if($item->size_snapshot)
+                                        <p class="text-sm text-mocha flex items-center gap-1 mt-1">
+                                            <iconify-icon icon="solar:ruler-bold" class="text-sm"></iconify-icon>
+                                            Size: {{ $item->size_snapshot }}
+                                        </p>
+                                    @endif
+                                    @if($item->sku_snapshot)
+                                        <p class="text-xs text-gray-500 mt-1">SKU: {{ $item->sku_snapshot }}</p>
+                                    @endif
+                                    <p class="text-sm text-gray-500 mt-2">Quantity: {{ $item->quantity }}</p>
                                     <p class="text-sm text-mocha">Rp {{ number_format($item->price, 0, ',', '.') }} each</p>
                                 </div>
                                 <p class="font-bold text-mocha">

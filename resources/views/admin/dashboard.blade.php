@@ -80,10 +80,22 @@
                 <div class="flex justify-between items-center p-3 bg-red-50 rounded">
                     <div>
                         <p class="font-semibold text-espresso">{{ $product->name }}</p>
-                        <p class="text-sm text-gray-500">{{ $product->category->name }}</p>
+                        <p class="text-sm text-gray-500">{{ $product->category->name ?? 'No category' }}</p>
                     </div>
                     <div class="text-right">
-                        <p class="font-bold text-red-600">{{ $product->stock }} left</p>
+                        @if($product->variations && $product->variations->count() > 0)
+                            <p class="font-bold text-red-600">
+                                {{ $product->variations->sum('stock_quantity') }} left
+                            </p>
+                            <p class="text-xs text-gray-500">
+                                @foreach($product->variations as $variation)
+                                    {{ $variation->size }}: {{ $variation->stock_quantity }}
+                                    @if(!$loop->last), @endif
+                                @endforeach
+                            </p>
+                        @else
+                            <p class="font-bold text-red-600">0 left</p>
+                        @endif
                         <a href="{{ route('admin.products.edit', $product->id) }}" class="text-xs text-mocha hover:text-espresso">Edit</a>
                     </div>
                 </div>

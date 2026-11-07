@@ -24,16 +24,20 @@
                 <div>
                     <p class="text-gray-500">Order Status</p>
                     <p class="font-semibold">
-                        @if($order->status == 'pending')
-                            <span class="badge badge-pending">Pending</span>
+                        @if($order->status == 'pending_payment')
+                            <span class="badge badge-pending">Pending Payment</span>
+                        @elseif($order->status == 'verifying_payment')
+                            <span class="badge badge-pending">Verifying Payment</span>
                         @elseif($order->status == 'processing')
                             <span class="badge badge-processing">Processing</span>
-                        @elseif($order->status == 'shipped')
-                            <span class="badge badge-shipped">Shipped</span>
+                        @elseif($order->status == 'shipping')
+                            <span class="badge badge-shipped">Shipping</span>
                         @elseif($order->status == 'completed')
                             <span class="badge badge-completed">Completed</span>
-                        @else
+                        @elseif($order->status == 'cancelled')
                             <span class="badge badge-cancelled">Cancelled</span>
+                        @else
+                            <span class="badge badge-cancelled">Payment Failed</span>
                         @endif
                     </p>
                 </div>
@@ -128,17 +132,19 @@
             <h3 class="text-lg font-bold text-espresso mb-4">Update Status</h3>
             <form action="{{ route('admin.orders.update-status', $order->id) }}" method="POST">
                 @csrf
-                @method('PUT')
+                @method('PATCH')
                 
                 <div class="space-y-4">
                     <div>
                         <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Order Status</label>
                         <select name="status" id="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracotta">
-                            <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="pending_payment" {{ $order->status == 'pending_payment' ? 'selected' : '' }}>Pending Payment</option>
+                            <option value="verifying_payment" {{ $order->status == 'verifying_payment' ? 'selected' : '' }}>Verifying Payment</option>
                             <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing</option>
-                            <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Shipped</option>
+                            <option value="shipping" {{ $order->status == 'shipping' ? 'selected' : '' }}>Shipping</option>
                             <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Completed</option>
                             <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                            <option value="payment_failed" {{ $order->status == 'payment_failed' ? 'selected' : '' }}>Payment Failed</option>
                         </select>
                     </div>
                     

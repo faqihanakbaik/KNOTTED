@@ -92,6 +92,9 @@
                                         @endif
                                         <div class="flex-1">
                                             <p class="font-semibold text-espresso">{{ $item->product_name }}</p>
+                                            @if($item->size_snapshot)
+                                                <p class="text-xs text-mocha">Size: {{ $item->size_snapshot }}</p>
+                                            @endif
                                             <p class="text-sm text-gray-500">Qty: {{ $item->quantity }} × Rp {{ number_format($item->price, 0, ',', '.') }}</p>
                                         </div>
                                         <p class="font-semibold text-mocha">
