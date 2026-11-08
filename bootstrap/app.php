@@ -11,7 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Register middleware aliases
+
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'customer' => \App\Http\Middleware\CustomerMiddleware::class,
@@ -19,10 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'secure.session' => \App\Http\Middleware\SecureSession::class,
         ]);
 
-        // Add secure session middleware to web group
-        $middleware->web(append: [
-            \App\Http\Middleware\SecureSession::class,
-        ]);
+        // SecureSession TIDAK dipasang secara global.
+        // Login dan session Laravel menggunakan mekanisme standar.
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

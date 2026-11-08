@@ -20,64 +20,41 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->filled('remember'))) {
-            $request->session()->regenerate();
-
-            // Generate unique tab token
-            $tabToken = Str::random(64);
-
-            // Store session security data
-            session([
-                'user_agent' => $request->userAgent(),
-                'last_regeneration' => time(),
-            ]);
-
-            // Add this tab to active tabs
-            $activeTabs = session('active_tabs', []);
-            $activeTabs[$tabToken] = [
-                'created_at' => time(),
-                'last_activity' => time(),
-                'user_agent' => $request->userAgent(),
-            ];
-            session(['active_tabs' => $activeTabs]);
-
-            $user = Auth::user();
-            
-            // Role-based redirect with tab token
-            if ($user->isAdmin()) {
-                return redirect()->route('admin.dashboard')
-                    ->with('success', 'Welcome back, Admin!')
-                    ->with('tab_token', $tabToken);
-            }
-
-            return redirect()->intended(route('home'))
-                ->with('success', 'Welcome back!')
-                ->with('tab_token', $tabToken);
+        if (!Auth::attempt(
+            $credentials,
+            $request->boolean('remember')
+        )) {
+            return back()->withErrors([
+                'email' => 'Email atau password salah.',
+            ])->onlyInput('email');
         }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+
+        if ($user->isAdmin()) {
+            return redirect()->intended(
+                route('admin.dashboard')
+            )->with('success', 'Welcome back, Admin!');
+        }
+
+        return redirect()->intended(
+            route('home')
+        )->with('success', 'Welcome back!');
     }
 
     public function logout(Request $request)
     {
-        // Remove current tab token
-        $tabToken = $request->header('X-Tab-Token');
-        if ($tabToken) {
-            $activeTabs = session('active_tabs', []);
-            unset($activeTabs[$tabToken]);
-            session(['active_tabs' => $activeTabs]);
-        }
+        Auth::logout();
 
-        // If no more active tabs, full logout
-        $activeTabs = session('active_tabs', []);
-        if (empty($activeTabs)) {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-        }
+        $request->session()->invalidate();
 
-        return redirect('/')->with('success', 'Logged out successfully.');
+        $request->session()->regenerateToken();
+
+        return redirect('/')->with(
+            'success',
+            'Logged out successfully.'
+        );
     }
 }
