@@ -1,10 +1,11 @@
 # ==========================================
 # KNOTTED - Laravel 12 Production
-# PHP 8.4 + Apache + Supabase
+# PHP 8.4 CLI + Supabase + Railway
+# NO APACHE
 # ==========================================
 
 # ------------------------------------------
-# STAGE 1: Build frontend assets
+# STAGE 1: Build frontend
 # ------------------------------------------
 FROM node:22-alpine AS frontend
 
@@ -20,7 +21,7 @@ RUN npm run build
 # ------------------------------------------
 # STAGE 2: Laravel application
 # ------------------------------------------
-FROM php:8.4-apache
+FROM php:8.4-cli
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -50,7 +51,7 @@ RUN docker-php-ext-install -j$(nproc) \
     simplexml \
     xml
 
-# Install GD extension
+# Install GD
 RUN docker-php-ext-configure gd \
     --with-freetype \
     --with-jpeg \
@@ -59,16 +60,15 @@ RUN docker-php-ext-configure gd \
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Configure Composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV COMPOSER_PROCESS_TIMEOUT=600
 
 WORKDIR /var/www/html
 
-# Copy Laravel application
+# Copy application
 COPY . .
 
-# Install production dependencies with retry
+# Install Composer dependencies with retry
 RUN set -eux; \
     composer config --global process-timeout 600; \
     for attempt in 1 2 3; do \
@@ -82,61 +82,29 @@ RUN set -eux; \
             break; \
         fi; \
         if [ "$attempt" -eq 3 ]; then \
-            echo "Composer installation failed after 3 attempts."; \
             exit 1; \
         fi; \
-        echo "Composer download failed. Retrying in 10 seconds..."; \
+        echo "Retrying Composer installation..."; \
         sleep 10; \
     done
 
-# Run Laravel package discovery manually
+# Laravel package discovery
 RUN php artisan package:discover --ansi
 
-# Copy built frontend assets
+# Copy frontend build
 COPY --from=frontend /app/public/build ./public/build
 
-# ------------------------------------------
-# APACHE CONFIGURATION
-# ------------------------------------------
-
-# Remove all enabled MPM modules, then enable only prefork
-RUN rm -f /etc/apache2/mods-enabled/mpm_*.load \
-          /etc/apache2/mods-enabled/mpm_*.conf \
-    && a2enmod mpm_prefork rewrite headers \
-    && apache2ctl -M 2>&1 | grep mpm_ \
-    && test "$(apache2ctl -M 2>&1 | grep -Ec 'mpm_[a-z]+_module')" -eq 1
-
-# Configure Apache to listen on port 8080
-RUN sed -i 's/^Listen 80$/Listen 8080/' /etc/apache2/ports.conf \
-    && printf '%s\n' \
-        '<VirtualHost *:8080>' \
-        '    DocumentRoot /var/www/html/public' \
-        '    <Directory /var/www/html/public>' \
-        '        AllowOverride All' \
-        '        Require all granted' \
-        '    </Directory>' \
-        '    ErrorLog ${APACHE_LOG_DIR}/error.log' \
-        '    CustomLog ${APACHE_LOG_DIR}/access.log combined' \
-        '</VirtualHost>' \
-        > /etc/apache2/sites-available/000-default.conf
-
-# ------------------------------------------
-# LARAVEL PERMISSIONS
-# ------------------------------------------
-
+# Prepare Laravel directories
 RUN mkdir -p \
     storage/framework/cache/data \
     storage/framework/sessions \
     storage/framework/views \
     storage/logs \
     bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# ------------------------------------------
-# START APPLICATION
-# ------------------------------------------
-
+# Railway port
 EXPOSE 8080
 
-CMD ["apache2-foreground"]
+# Start Laravel using Railway PORT
+CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"]
