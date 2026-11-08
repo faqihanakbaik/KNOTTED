@@ -17,9 +17,9 @@ RUN npm run build
 
 
 # Stage 2: Laravel application
-FROM php:8.5-apache
+FROM php:8.4-apache
 
-# Install system dependencies and build tools
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     libonig-dev \
@@ -29,39 +29,17 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libxml2-dev \
     libcurl4-openssl-dev \
-    cmake \
-    wget \
     unzip \
     git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Build and install lexbor library from source
-RUN cd /tmp \
-    && wget https://github.com/lexbor/lexbor/archive/refs/tags/v2.3.0.tar.gz \
-    && tar -xzf v2.3.0.tar.gz \
-    && cd lexbor-2.3.0 \
-    && cmake . \
-    && make \
-    && make install \
-    && ldconfig \
-    && cd / \
-    && rm -rf /tmp/lexbor-2.3.0 /tmp/v2.3.0.tar.gz
-
-# Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
-        pdo_pgsql \
-        mbstring \
-        bcmath \
-        curl \
-        gd \
-        zip \
-        exif \
-        pcntl \
-        dom \
-        simplexml \
-        xml
+# Install PHP extensions in groups to avoid timeout
+RUN docker-php-ext-install -j$(nproc) pdo_pgsql pgsql
+RUN docker-php-ext-install -j$(nproc) mbstring bcmath
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install -j$(nproc) gd
+RUN docker-php-ext-install -j$(nproc) zip exif pcntl
+RUN docker-php-ext-install -j$(nproc) dom simplexml xml
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
