@@ -76,13 +76,13 @@ return [
             'driver' => 's3',
             'key' => env('SUPABASE_STORAGE_KEY'),
             'secret' => env('SUPABASE_STORAGE_SECRET'),
-            'region' => env('SUPABASE_STORAGE_REGION'),
+            'region' => env('SUPABASE_STORAGE_REGION', 'auto'),
             'bucket' => env('SUPABASE_PRODUCT_BUCKET'),
             'endpoint' => env('SUPABASE_STORAGE_ENDPOINT'),
             'use_path_style_endpoint' => true,
-            'url' => rtrim(env('SUPABASE_URL'), '/') .
+            'url' => rtrim((string) env('SUPABASE_URL', ''), '/') .
                 '/storage/v1/object/public/' .
-                env('SUPABASE_PRODUCT_BUCKET'),
+                env('SUPABASE_PRODUCT_BUCKET', ''),
             'throw' => true,
         ],
 
