@@ -14,9 +14,11 @@ class SupabaseStorageService
 
     public function __construct()
     {
-        $this->projectUrl = config('services.supabase.url');
-        $this->apiKey = config('services.supabase.anon_key');
-        $this->storageUrl = config('services.supabase.storage_url');
+        $this->projectUrl = rtrim((string) config('services.supabase.url'), '/');
+        // Server-side uploads/deletes should use the secret service key.
+        // Keep the anon key only as a local-development fallback when explicitly configured.
+        $this->apiKey = (string) (config('services.supabase.service_key') ?: config('services.supabase.anon_key'));
+        $this->storageUrl = rtrim((string) config('services.supabase.storage_url'), '/');
     }
 
     /**
@@ -34,15 +36,27 @@ class SupabaseStorageService
             $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $filePath = $path ? $path . '/' . $filename : $filename;
 
-            // Get file contents
-            $fileContents = file_get_contents($file->getRealPath());
+            if ($this->storageUrl === '' || $this->apiKey === '') {
+                throw new \RuntimeException('Supabase Storage is not configured. Set SUPABASE_URL and SUPABASE_SERVICE_KEY.');
+            }
 
-            // Upload to Supabase Storage
-            $response = Http::withHeaders([
+            // Encode each path segment while preserving folder separators.
+            $encodedBucket = rawurlencode($bucket);
+            $encodedPath = implode('/', array_map('rawurlencode', explode('/', $filePath)));
+            $fileContents = file_get_contents($file->getRealPath());
+            if ($fileContents === false) {
+                throw new \RuntimeException('Unable to read uploaded image.');
+            }
+
+            // Upload to Supabase Storage using the server-side service key.
+            $mimeType = $file->getMimeType() ?: 'application/octet-stream';
+            $response = Http::timeout(30)->withHeaders([
+                'apikey' => $this->apiKey,
                 'Authorization' => 'Bearer ' . $this->apiKey,
-                'Content-Type' => $file->getMimeType(),
-            ])->withBody($fileContents, $file->getMimeType())
-              ->post("{$this->storageUrl}/object/{$bucket}/{$filePath}");
+                'Content-Type' => $mimeType,
+                'x-upsert' => 'false',
+            ])->withBody($fileContents, $mimeType)
+              ->post("{$this->storageUrl}/object/{$encodedBucket}/{$encodedPath}");
 
             if ($response->successful()) {
                 $publicUrl = $this->getPublicUrl($bucket, $filePath);
@@ -92,9 +106,16 @@ class SupabaseStorageService
     public function delete(string $bucket, string $filePath): bool
     {
         try {
-            $response = Http::withHeaders([
+            if ($this->storageUrl === '' || $this->apiKey === '') {
+                return false;
+            }
+
+            $encodedBucket = rawurlencode($bucket);
+            $encodedPath = implode('/', array_map('rawurlencode', explode('/', ltrim($filePath, '/'))));
+            $response = Http::timeout(30)->withHeaders([
+                'apikey' => $this->apiKey,
                 'Authorization' => 'Bearer ' . $this->apiKey,
-            ])->delete("{$this->storageUrl}/object/{$bucket}/{$filePath}");
+            ])->delete("{$this->storageUrl}/object/{$encodedBucket}/{$encodedPath}");
 
             return $response->successful();
 
@@ -117,7 +138,9 @@ class SupabaseStorageService
      */
     public function getPublicUrl(string $bucket, string $filePath): string
     {
-        return "{$this->storageUrl}/object/public/{$bucket}/{$filePath}";
+        $encodedBucket = rawurlencode($bucket);
+        $encodedPath = implode('/', array_map('rawurlencode', explode('/', ltrim($filePath, '/'))));
+        return "{$this->storageUrl}/object/public/{$encodedBucket}/{$encodedPath}";
     }
 
     /**
@@ -130,9 +153,16 @@ class SupabaseStorageService
     public function exists(string $bucket, string $filePath): bool
     {
         try {
-            $response = Http::withHeaders([
+            if ($this->storageUrl === '' || $this->apiKey === '') {
+                return false;
+            }
+
+            $encodedBucket = rawurlencode($bucket);
+            $encodedPath = implode('/', array_map('rawurlencode', explode('/', ltrim($filePath, '/'))));
+            $response = Http::timeout(15)->withHeaders([
+                'apikey' => $this->apiKey,
                 'Authorization' => 'Bearer ' . $this->apiKey,
-            ])->head("{$this->storageUrl}/object/{$bucket}/{$filePath}");
+            ])->head("{$this->storageUrl}/object/{$encodedBucket}/{$encodedPath}");
 
             return $response->successful();
 

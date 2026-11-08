@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
 use App\Services\SupabaseStorageService;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class ProductManagementController extends Controller
 {
@@ -44,21 +46,24 @@ class ProductManagementController extends Controller
             'variations.*.stock_quantity' => 'required|integer|min:0',
         ]);
 
-        // Try Supabase first, fallback to local if fails
-        $bucket = config('services.supabase.buckets.products');
+        // Product images must be stored in Supabase; do not silently fall back to
+        // Railway's ephemeral local filesystem.
+        $bucket = config('services.supabase.buckets.products', 'product-images');
         $uploadResult = $this->storage->upload($request->file('image'), $bucket, 'products');
 
-        if ($uploadResult['success']) {
-            $validated['image'] = $uploadResult['url'];
-        } else {
-            \Log::warning('Supabase upload failed, using local storage', ['error' => $uploadResult['error']]);
-            
-            $file = $request->file('image');
-            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/products'), $filename);
-            
-            $validated['image'] = asset('images/products/' . $filename);
+        if (!$uploadResult['success']) {
+            Log::error('Product image upload to Supabase failed', [
+                'status_or_error' => $uploadResult['error'],
+            ]);
+
+            throw ValidationException::withMessages([
+                'image' => 'Foto gagal diunggah ke penyimpanan. Silakan coba lagi atau hubungi administrator.',
+            ]);
         }
+
+        // Store the storage path, not a Railway URL. Product::image accessor
+        // converts this path to the public Supabase URL when rendering.
+        $validated['image'] = $uploadResult['path'];
 
         $validated['is_featured'] = $request->has('is_featured');
         $validated['is_active'] = $request->has('is_active');
@@ -112,45 +117,44 @@ class ProductManagementController extends Controller
             'variations.*.stock_quantity' => 'required|integer|min:0',
         ]);
 
-        // Handle image upload if new image provided
+        // Upload a replacement first. Keep the old image intact if upload fails.
+        $oldImageRaw = $product->getRawOriginal('image');
+        $newUploadedPath = null;
+
         if ($request->hasFile('image')) {
-            $bucket = config('services.supabase.buckets.products');
-            
+            $bucket = config('services.supabase.buckets.products', 'product-images');
             $uploadResult = $this->storage->upload($request->file('image'), $bucket, 'products');
 
-            if ($uploadResult['success']) {
-                if ($product->image && str_contains($product->image, 'supabase.co')) {
-                    $this->deleteImageFromUrl($product->image, $bucket);
-                } elseif ($product->image) {
-                    $oldPath = public_path('images/products/' . basename($product->image));
-                    if (file_exists($oldPath)) {
-                        unlink($oldPath);
-                    }
-                }
-                
-                $validated['image'] = $uploadResult['url'];
-            } else {
-                \Log::warning('Supabase upload failed, using local storage', ['error' => $uploadResult['error']]);
-                
-                if ($product->image && !str_contains($product->image, 'supabase.co')) {
-                    $oldPath = public_path('images/products/' . basename($product->image));
-                    if (file_exists($oldPath)) {
-                        unlink($oldPath);
-                    }
-                }
-                
-                $file = $request->file('image');
-                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('images/products'), $filename);
-                
-                $validated['image'] = asset('images/products/' . $filename);
+            if (!$uploadResult['success']) {
+                Log::error('Product image replacement upload failed', [
+                    'product_id' => $product->id,
+                    'status_or_error' => $uploadResult['error'],
+                ]);
+
+                throw ValidationException::withMessages([
+                    'image' => 'Foto baru gagal diunggah. Foto lama tetap dipertahankan.',
+                ]);
             }
+
+            $validated['image'] = $uploadResult['path'];
+            $newUploadedPath = $uploadResult['path'];
         }
 
         $validated['is_featured'] = $request->has('is_featured');
         $validated['is_active'] = $request->has('is_active');
 
         $product->update($validated);
+
+        // Delete the previous Supabase object only after the database update succeeds.
+        if ($newUploadedPath && $oldImageRaw) {
+            $oldStoragePath = $this->extractProductStoragePath($oldImageRaw);
+            if ($oldStoragePath && $oldStoragePath !== $newUploadedPath) {
+                $this->storage->delete(
+                    config('services.supabase.buckets.products', 'product-images'),
+                    $oldStoragePath
+                );
+            }
+        }
 
         // Update variations
         if ($request->has('variations') && is_array($request->variations)) {
@@ -191,16 +195,17 @@ class ProductManagementController extends Controller
         $product = Product::findOrFail($id);
         $bucket = config('services.supabase.buckets.products');
 
-        // Delete image
-        if ($product->image) {
-            if (str_contains($product->image, 'supabase.co')) {
-                // Delete from Supabase
-                $this->deleteImageFromUrl($product->image, $bucket);
-            } else {
-                // Delete local file
-                $localPath = public_path('images/products/' . basename($product->image));
-                if (file_exists($localPath)) {
-                    unlink($localPath);
+        // Delete from Supabase when the stored value is a Supabase path or URL.
+        $rawImage = $product->getRawOriginal('image');
+        if ($rawImage) {
+            $storagePath = $this->extractProductStoragePath($rawImage);
+            if ($storagePath) {
+                $this->storage->delete($bucket, $storagePath);
+            } elseif (str_starts_with($rawImage, '/images/products/')) {
+                // Legacy local files are removed only when the exact path is under this directory.
+                $localPath = public_path('images/products/' . basename($rawImage));
+                if (is_file($localPath)) {
+                    @unlink($localPath);
                 }
             }
         }
@@ -211,17 +216,27 @@ class ProductManagementController extends Controller
     }
 
     /**
-     * Helper method to extract path from Supabase URL and delete
+     * Resolve the stored product image value to a path inside the product bucket.
+     * Supports Supabase public URLs, products/... paths, and legacy bare filenames.
      */
-    private function deleteImageFromUrl(string $url, string $bucket): void
+    private function extractProductStoragePath(string $value): ?string
     {
-        // Extract filename from URL
-        // URL format: https://PROJECT.supabase.co/storage/v1/object/public/BUCKET/PATH
-        $pattern = '/\/object\/public\/' . preg_quote($bucket, '/') . '\/(.+)$/';
-        
-        if (preg_match($pattern, $url, $matches)) {
-            $filePath = $matches[1];
-            $this->storage->delete($bucket, $filePath);
+        $bucket = config('services.supabase.buckets.products', 'product-images');
+        $value = trim($value);
+
+        if (preg_match('#/storage/v1/object/public/' . preg_quote($bucket, '#') . '/(.+)$#', $value, $matches)) {
+            return rawurldecode($matches[1]);
         }
+
+        if (str_starts_with($value, 'products/')) {
+            return $value;
+        }
+
+        if (!str_contains($value, '://') && !str_starts_with($value, '/')) {
+            return 'products/' . basename($value);
+        }
+
+        return null;
     }
+
 }

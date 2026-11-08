@@ -67,18 +67,33 @@ class Product extends Model
             return null;
         }
 
-        // If it's already a full URL (http/https), return as is
+        // Preserve absolute URLs already stored in the database.
         if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
             return $value;
         }
 
-        // If it starts with /, it's already a path from public root
+        // Preserve explicit legacy root-relative paths.
         if (str_starts_with($value, '/')) {
             return $value;
         }
 
-        // Otherwise, prepend /images/products/ for backwards compatibility
-        return '/images/products/' . $value;
+        // Product images are stored in the public Supabase product-images bucket.
+        // Older rows may contain only the filename; newer rows may contain products/filename.
+        $bucket = config('services.supabase.buckets.products', 'product-images');
+        $storageUrl = rtrim((string) config('services.supabase.storage_url'), '/');
+        $path = ltrim($value, '/');
+
+        if (!str_starts_with($path, 'products/')) {
+            $path = 'products/' . $path;
+        }
+
+        if ($storageUrl !== '') {
+            $encodedPath = implode('/', array_map('rawurlencode', explode('/', $path)));
+            return $storageUrl . '/object/public/' . rawurlencode($bucket) . '/' . $encodedPath;
+        }
+
+        // Safe fallback for local development when Supabase is not configured.
+        return '/images/products/' . basename($path);
     }
 
     // Helper methods
