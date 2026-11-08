@@ -60,11 +60,12 @@ RUN composer install \
 # Copy built frontend assets
 COPY --from=frontend /app/public/build ./public/build
 
-# Configure Apache - Ensure only one MPM is enabled
-RUN a2dismod mpm_event mpm_worker mpm_prefork || true
-
-RUN a2enmod mpm_prefork rewrite headers \
-    && apache2ctl -M | grep mpm_prefork
+# Configure Apache - Force exactly one MPM
+RUN rm -f /etc/apache2/mods-enabled/mpm_*.load \
+          /etc/apache2/mods-enabled/mpm_*.conf \
+    && a2enmod mpm_prefork rewrite headers \
+    && apache2ctl -M 2>&1 | grep mpm_ \
+    && test "$(apache2ctl -M 2>&1 | grep -c 'mpm_.*_module')" -eq 1
 
 # Configure Apache port and virtual host
 RUN sed -i 's/^Listen 80$/Listen 10000/' /etc/apache2/ports.conf \
