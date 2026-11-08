@@ -71,7 +71,6 @@ COPY . .
 # Install production dependencies with retry
 RUN set -eux; \
     composer config --global process-timeout 600; \
-    composer config --global max-parallel-http 1; \
     for attempt in 1 2 3; do \
         if composer install \
             --no-dev \
