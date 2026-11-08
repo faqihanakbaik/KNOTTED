@@ -50,12 +50,17 @@ WORKDIR /var/www/html
 # Copy Laravel source code
 COPY . .
 
+# Set Composer environment
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
 # Install production dependencies
 RUN composer install \
     --no-dev \
     --no-interaction \
     --prefer-dist \
-    --optimize-autoloader
+    --optimize-autoloader \
+    --no-progress \
+    --no-scripts
 
 # Copy built frontend assets
 COPY --from=frontend /app/public/build ./public/build
