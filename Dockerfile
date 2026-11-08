@@ -60,7 +60,11 @@ RUN composer install \
 # Copy built frontend assets
 COPY --from=frontend /app/public/build ./public/build
 
-# Configure Apache
+# Configure Apache - Fix MPM issue
+RUN a2dismod mpm_event mpm_worker \
+    && a2enmod mpm_prefork rewrite headers
+
+# Configure Apache port and virtual host
 RUN sed -i 's/^Listen 80$/Listen 10000/' /etc/apache2/ports.conf \
     && printf '%s\n' \
         '<VirtualHost *:10000>' \
@@ -72,8 +76,7 @@ RUN sed -i 's/^Listen 80$/Listen 10000/' /etc/apache2/ports.conf \
         'ErrorLog ${APACHE_LOG_DIR}/error.log' \
         'CustomLog ${APACHE_LOG_DIR}/access.log combined' \
         '</VirtualHost>' \
-        > /etc/apache2/sites-available/000-default.conf \
-    && a2enmod rewrite headers
+        > /etc/apache2/sites-available/000-default.conf
 
 # Prepare Laravel writable directories
 RUN mkdir -p \
