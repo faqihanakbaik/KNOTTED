@@ -11,10 +11,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Register middleware aliases
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'customer' => \App\Http\Middleware\CustomerMiddleware::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'secure.session' => \App\Http\Middleware\SecureSession::class,
+        ]);
+
+        // Add secure session middleware to web group
+        $middleware->web(append: [
+            \App\Http\Middleware\SecureSession::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

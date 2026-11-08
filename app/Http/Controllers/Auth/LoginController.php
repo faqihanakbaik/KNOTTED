@@ -23,6 +23,13 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
 
+            // Store session security data
+            session([
+                'user_agent' => $request->userAgent(),
+                'last_regeneration' => time(),
+                // 'ip_address' => $request->ip(), // Uncomment jika mau validasi IP
+            ]);
+
             $user = Auth::user();
             
             // Role-based redirect

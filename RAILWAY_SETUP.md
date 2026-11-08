@@ -7,7 +7,7 @@
 ✅ PostgreSQL extension added to composer.json
 
 ---
-
+   
 ## Step 1: Add PostgreSQL Database to Railway Project
 
 ### Option A: Using Railway Template (Recommended)
