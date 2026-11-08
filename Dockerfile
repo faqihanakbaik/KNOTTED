@@ -29,6 +29,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libxml2-dev \
     libcurl4-openssl-dev \
+    liblexbor-dev \
     unzip \
     git \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
