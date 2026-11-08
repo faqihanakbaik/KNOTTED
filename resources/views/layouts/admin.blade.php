@@ -7,6 +7,13 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://code.iconify.design/iconify-icon/2.0.0/iconify-icon.min.js"></script>
+    
+    <!-- Tab Authentication -->
+    <meta name="auth-required" content="true">
+    @if(session('tab_token'))
+    <meta name="tab-token" content="{{ session('tab_token') }}">
+    @endif
+    <script src="{{ asset('js/tab-auth.js') }}" defer></script>
 </head>
 <body class="font-sans antialiased bg-gray-50">
     

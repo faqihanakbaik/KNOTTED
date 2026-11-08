@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class SecureSession
@@ -11,60 +12,96 @@ class SecureSession
     /**
      * Handle an incoming request.
      *
-     * Validasi session security:
-     * - User Agent harus sama dengan saat login
-     * - IP Address harus sama (opsional, bisa dimatikan untuk mobile users)
-     * - Regenerate session ID secara berkala
+     * Validasi tab-scoped authentication:
+     * - Setiap tab harus punya tab_token yang valid
+     * - Tab token disimpan di sessionStorage (per-tab)
+     * - Server validasi tab_token pada setiap request
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Skip untuk guest users
+        // Skip untuk guest users dan AJAX requests tanpa token
         if (!auth()->check()) {
             return $next($request);
         }
 
-        // Validasi User Agent
-        $sessionUserAgent = session('user_agent');
-        $currentUserAgent = $request->userAgent();
+        // Get tab token dari header atau query parameter (untuk link navigation)
+        $tabToken = $request->header('X-Tab-Token') ?: $request->input('_tab_token');
 
-        if ($sessionUserAgent && $sessionUserAgent !== $currentUserAgent) {
-            // User Agent berubah - kemungkinan session hijacking
+        // Get active tab tokens dari server session
+        $activeTabs = session('active_tabs', []);
+
+        // Jika tidak ada tab token, redirect ke login
+        if (!$tabToken) {
+            // Ini terjadi saat user copy-paste URL ke tab baru
             auth()->logout();
             session()->invalidate();
             session()->regenerateToken();
 
-            return redirect()->route('login')->with('error', 'Sesi tidak valid. Silakan login kembali.');
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Tab not authenticated'], 401);
+            }
+
+            return redirect()->route('login')
+                ->with('error', 'Silakan login untuk tab ini.');
         }
 
-        // Simpan User Agent di session saat pertama kali (setelah login)
+        // Validasi tab token
+        if (!isset($activeTabs[$tabToken])) {
+            // Tab token tidak valid atau sudah expired
+            auth()->logout();
+            session()->invalidate();
+            session()->regenerateToken();
+
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Invalid tab token'], 401);
+            }
+
+            return redirect()->route('login')
+                ->with('error', 'Sesi tab tidak valid. Silakan login kembali.');
+        }
+
+        // Update last activity untuk tab ini
+        $activeTabs[$tabToken]['last_activity'] = time();
+        session(['active_tabs' => $activeTabs]);
+
+        // Cleanup expired tabs (lebih dari 2 jam tidak aktif)
+        $this->cleanupExpiredTabs();
+
+        // Validasi User Agent untuk security
+        $sessionUserAgent = session('user_agent');
+        $currentUserAgent = $request->userAgent();
+
+        if ($sessionUserAgent && $sessionUserAgent !== $currentUserAgent) {
+            auth()->logout();
+            session()->invalidate();
+            session()->regenerateToken();
+
+            return redirect()->route('login')
+                ->with('error', 'Sesi tidak valid. Silakan login kembali.');
+        }
+
         if (!$sessionUserAgent) {
             session(['user_agent' => $currentUserAgent]);
         }
 
-        // Validasi IP Address (Opsional - uncomment jika perlu)
-        // $sessionIp = session('ip_address');
-        // $currentIp = $request->ip();
-        //
-        // if ($sessionIp && $sessionIp !== $currentIp) {
-        //     auth()->logout();
-        //     session()->invalidate();
-        //     session()->regenerateToken();
-        //     return redirect()->route('login')->with('error', 'Alamat IP berubah. Silakan login kembali.');
-        // }
-        //
-        // if (!$sessionIp) {
-        //     session(['ip_address' => $currentIp]);
-        // }
+        return $next($request);
+    }
 
-        // Regenerate session ID setiap 15 menit untuk keamanan
-        $lastRegeneration = session('last_regeneration', 0);
+    /**
+     * Cleanup expired tab tokens
+     */
+    private function cleanupExpiredTabs(): void
+    {
+        $activeTabs = session('active_tabs', []);
         $now = time();
+        $maxInactivity = 7200; // 2 hours
 
-        if ($now - $lastRegeneration > 900) { // 15 menit
-            $request->session()->regenerate();
-            session(['last_regeneration' => $now]);
+        foreach ($activeTabs as $token => $data) {
+            if ($now - $data['last_activity'] > $maxInactivity) {
+                unset($activeTabs[$token]);
+            }
         }
 
-        return $next($request);
+        session(['active_tabs' => $activeTabs]);
     }
 }

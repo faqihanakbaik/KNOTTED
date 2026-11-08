@@ -13,6 +13,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <!-- AOS Animation Library -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Tab Authentication -->
+    @auth
+    <meta name="auth-required" content="true">
+    @if(session('tab_token'))
+    <meta name="tab-token" content="{{ session('tab_token') }}">
+    @endif
+    <script src="{{ asset('js/tab-auth.js') }}" defer></script>
+    @endauth
 </head>
 <body class="font-sans antialiased bg-cream text-espresso">
     
