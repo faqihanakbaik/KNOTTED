@@ -1,0 +1,262 @@
+═══════════════════════════════════════════════════════════════
+  KNOTTED - Railway Deployment Checklist
+═══════════════════════════════════════════════════════════════
+
+✅ PRE-DEPLOYMENT VERIFICATION (COMPLETED)
+───────────────────────────────────────────────────────────────
+✓ composer.json - PostgreSQL extensions added (pdo, pdo_pgsql, pgsql)
+✓ composer.json - PHP ^8.2 requirement set
+✓ composer.lock - Updated and synced
+✓ .env.example - PostgreSQL configuration ready
+✓ .gitignore - .env file is ignored
+✓ database/KNOTTED_COMPLETE_SETUP.sql - Complete database ready
+✓ database/README.md - Database documentation ready
+✓ nixpacks.toml - Railway PHP 8.4 config ready
+✓ Procfile - Web process defined
+✓ RAILWAY_SETUP.md - Complete deployment guide created
+✓ .php-version - PHP 8.4 preference set
+✓ Dockerfile + .dockerignore - Docker support added
+✓ composer validate - PASSED
+✓ Laravel version - 12.71.0 working
+✓ Git status - Clean, 10 commits ready to push
+
+═══════════════════════════════════════════════════════════════
+  DEPLOYMENT STEPS
+═══════════════════════════════════════════════════════════════
+
+STEP 1: PUSH TO GITHUB
+───────────────────────────────────────────────────────────────
+Command:
+  git push origin main
+
+Expected: 10 commits pushed successfully
+
+───────────────────────────────────────────────────────────────
+STEP 2: RAILWAY PROJECT SETUP
+───────────────────────────────────────────────────────────────
+1. Go to: https://railway.app
+2. Login/Signup with GitHub
+3. Click "New Project"
+4. Select "Deploy from GitHub repo"
+5. Choose repository: KNOTTED
+6. Railway will auto-detect Laravel and start building
+
+───────────────────────────────────────────────────────────────
+STEP 3: ADD POSTGRESQL DATABASE
+───────────────────────────────────────────────────────────────
+In Railway project:
+1. Click "+ New" button
+2. Select "Database"
+3. Choose "Add PostgreSQL"
+4. Wait for provisioning (1-2 minutes)
+5. Database credentials auto-available as: ${{Postgres.DATABASE_URL}}
+
+───────────────────────────────────────────────────────────────
+STEP 4: CONFIGURE ENVIRONMENT VARIABLES
+───────────────────────────────────────────────────────────────
+In Railway service -> Variables tab, add:
+
+REQUIRED VARIABLES:
+─────────────────────
+APP_NAME=KNOTTED
+APP_ENV=production
+APP_KEY=<GENERATE_AFTER_FIRST_BUILD>
+APP_DEBUG=false
+APP_URL=${{RAILWAY_PUBLIC_DOMAIN}}
+
+DB_CONNECTION=pgsql
+DB_URL=${{Postgres.DATABASE_URL}}
+
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+CACHE_DRIVER=file
+QUEUE_CONNECTION=sync
+
+OPTIONAL (for production emails):
+─────────────────────────────────
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=hello@knotted.com
+MAIL_FROM_NAME=KNOTTED
+
+───────────────────────────────────────────────────────────────
+STEP 5: GENERATE APP_KEY
+───────────────────────────────────────────────────────────────
+After first build completes:
+1. Railway service -> Open Terminal (shell icon)
+2. Run: php artisan key:generate --show
+3. Copy the output (starts with base64:)
+4. Add to Railway Variables as APP_KEY
+5. Redeploy (Railway will restart automatically)
+
+───────────────────────────────────────────────────────────────
+STEP 6: RUN DATABASE MIGRATIONS
+───────────────────────────────────────────────────────────────
+In Railway terminal:
+
+# Run migrations
+php artisan migrate --force
+
+# Create storage symbolic link
+php artisan storage:link
+
+# Optimize for production
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+
+───────────────────────────────────────────────────────────────
+STEP 7: IMPORT SAMPLE DATA (OPTIONAL)
+───────────────────────────────────────────────────────────────
+Option A - Using PostgreSQL directly:
+1. Railway -> Postgres service -> Data tab
+2. Click "Connect" -> Copy connection string
+3. Use database client (DBeaver, pgAdmin, etc)
+4. Run: database/KNOTTED_COMPLETE_SETUP.sql
+
+Option B - Using psql:
+psql ${{Postgres.DATABASE_URL}} < database/KNOTTED_COMPLETE_SETUP.sql
+
+This will create:
+- 3 users (1 admin, 2 customers)
+- 6 categories
+- 12 products with 41 variations
+- Store settings
+
+Default Admin Login:
+  Email: admin@knotted.com
+  Password: password
+  ⚠️ CHANGE PASSWORD IMMEDIATELY AFTER LOGIN!
+
+───────────────────────────────────────────────────────────────
+STEP 8: VERIFICATION TESTS
+───────────────────────────────────────────────────────────────
+Access your Railway URL: https://your-app.railway.app
+
+Test Checklist:
+□ Homepage loads correctly
+□ Product catalog displays
+□ Product detail page shows variations
+□ Register new account works
+□ Login works
+□ Add to cart functions
+□ Checkout process works
+□ Payment proof upload works
+□ Admin login works (admin@knotted.com)
+□ Admin dashboard shows statistics
+□ Admin can add/edit products
+□ Admin can verify payments
+□ Images display correctly
+□ No console errors
+□ Mobile responsive working
+
+───────────────────────────────────────────────────────────────
+STEP 9: SECURITY HARDENING
+───────────────────────────────────────────────────────────────
+□ Change default admin password
+□ Set APP_DEBUG=false (already set)
+□ Verify HTTPS is enabled (Railway default)
+□ Check no sensitive data in logs
+□ Review environment variables
+□ Test CSRF protection
+□ Verify file upload limits
+
+───────────────────────────────────────────────────────────────
+STEP 10: POST-DEPLOYMENT SETUP
+───────────────────────────────────────────────────────────────
+1. Create new admin account with secure password
+2. Disable or delete default admin@knotted.com
+3. Configure store settings:
+   - Bank account details
+   - Shipping costs
+   - Contact information
+   - WhatsApp number
+4. Upload real products (if not using sample data)
+5. Test full order flow
+6. Setup monitoring/alerts
+7. Configure backup strategy
+
+═══════════════════════════════════════════════════════════════
+  TROUBLESHOOTING QUICK REFERENCE
+═══════════════════════════════════════════════════════════════
+
+Error: "could not find driver"
+Solution: Check PostgreSQL extensions in composer.json
+          Verify build logs show pdo_pgsql installation
+
+Error: "Connection refused"
+Solution: Set DB_URL=${{Postgres.DATABASE_URL}}
+          Verify Postgres service is running
+
+Error: "No application encryption key"
+Solution: Generate APP_KEY and add to variables
+
+Error: "Base table or view not found"
+Solution: Run: php artisan migrate --force
+
+Error: Images not showing
+Solution: Run: php artisan storage:link
+          Check public/storage symlink exists
+
+Error: 500 Internal Server Error
+Solution: Check logs: railway logs
+          Enable APP_DEBUG=true temporarily
+          Check .env variables are set
+
+═══════════════════════════════════════════════════════════════
+  IMPORTANT COMMANDS
+═══════════════════════════════════════════════════════════════
+
+# View logs
+railway logs
+
+# Open shell
+Click terminal icon in Railway dashboard
+
+# Check Laravel info
+php artisan about
+
+# Clear all caches
+php artisan optimize:clear
+
+# Re-optimize
+php artisan optimize
+
+# Check routes
+php artisan route:list
+
+# Create admin user (in tinker)
+php artisan tinker
+User::create([
+    'name' => 'Admin',
+    'email' => 'admin@knotted.com',
+    'password' => bcrypt('secure-password-here'),
+    'role' => 'admin'
+]);
+
+═══════════════════════════════════════════════════════════════
+  SUPPORT CONTACTS
+═══════════════════════════════════════════════════════════════
+
+Railway Support:
+  - Docs: https://docs.railway.app
+  - Discord: https://discord.gg/railway
+  - Status: https://status.railway.app
+
+KNOTTED Developer:
+  - Email: faqihmuqoddam3007@gmail.com
+  - Phone: 085892992913
+  - GitHub: github.com/faqihanakbaik
+  - Instagram: @faqiiihhhhhh
+
+═══════════════════════════════════════════════════════════════
+
+Ready to deploy! Follow steps in order.
+Good luck! 🚀
+
+Last updated: November 7, 2026
