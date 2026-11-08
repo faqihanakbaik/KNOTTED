@@ -19,7 +19,7 @@ RUN npm run build
 # Stage 2: Laravel application
 FROM php:8.5-apache
 
-# Install system dependencies and PHP extensions
+# Install system dependencies and build tools
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     libonig-dev \
@@ -29,10 +29,27 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libxml2-dev \
     libcurl4-openssl-dev \
-    liblexbor-dev \
+    cmake \
+    wget \
     unzip \
     git \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Build and install lexbor library from source
+RUN cd /tmp \
+    && wget https://github.com/lexbor/lexbor/archive/refs/tags/v2.3.0.tar.gz \
+    && tar -xzf v2.3.0.tar.gz \
+    && cd lexbor-2.3.0 \
+    && cmake . \
+    && make \
+    && make install \
+    && ldconfig \
+    && cd / \
+    && rm -rf /tmp/lexbor-2.3.0 /tmp/v2.3.0.tar.gz
+
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         pdo_pgsql \
         mbstring \
@@ -44,9 +61,7 @@ RUN apt-get update && apt-get install -y \
         pcntl \
         dom \
         simplexml \
-        xml \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+        xml
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
