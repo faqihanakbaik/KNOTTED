@@ -20,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.tab.security' => \App\Http\Middleware\AdminTabSecurity::class,
         ]);
 
+        // Force HTTPS in production
+        $middleware->append(\App\Http\Middleware\ForceHttps::class);
+        
         // SecureSession TIDAK dipasang secara global.
         // Login dan session Laravel menggunakan mekanisme standar.
     })
