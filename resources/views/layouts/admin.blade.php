@@ -14,6 +14,14 @@
     <meta name="tab-token" content="{{ session('tab_token') }}">
     @endif
     <script src="{{ asset('js/tab-auth.js') }}" defer></script>
+    
+    <style>
+        /* Remove default margins */
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 <body class="font-sans antialiased bg-gray-50">
     

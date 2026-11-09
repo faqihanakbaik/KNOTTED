@@ -22,6 +22,14 @@
     @endif
     <script src="{{ asset('js/tab-auth.js') }}" defer></script>
     @endauth
+    
+    <style>
+        /* Remove default margins */
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 <body class="font-sans antialiased bg-cream text-espresso">
     
