@@ -122,6 +122,59 @@
         }
     }
 
+    // Auto-refresh CSRF token every 10 minutes to prevent 419 error
+    setInterval(function() {
+        fetch('{{ route('home') }}', {
+            method: 'HEAD',
+            credentials: 'same-origin'
+        }).then(() => {
+            console.log('Session refreshed');
+        }).catch(err => {
+            console.warn('Session refresh failed:', err);
+        });
+    }, 600000); // 10 minutes
+
+    // Refresh CSRF token on form focus
+    const loginForm = document.querySelector('form[action="{{ route('login') }}"]');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    
+    let tokenRefreshed = false;
+    
+    function refreshCSRFToken() {
+        if (tokenRefreshed) return;
+        
+        fetch('{{ route('home') }}')
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newToken = doc.querySelector('meta[name="csrf-token"]');
+                
+                if (newToken) {
+                    const currentTokenMeta = document.querySelector('meta[name="csrf-token"]');
+                    const currentTokenInput = loginForm.querySelector('input[name="_token"]');
+                    
+                    if (currentTokenMeta) {
+                        currentTokenMeta.setAttribute('content', newToken.getAttribute('content'));
+                    }
+                    if (currentTokenInput) {
+                        currentTokenInput.value = newToken.getAttribute('content');
+                    }
+                    
+                    tokenRefreshed = true;
+                    console.log('CSRF token refreshed');
+                }
+            })
+            .catch(err => {
+                console.warn('Token refresh failed:', err);
+            });
+    }
+    
+    // Refresh token when user starts interacting with form
+    emailInput.addEventListener('focus', refreshCSRFToken, { once: true });
+    passwordInput.addEventListener('focus', refreshCSRFToken, { once: true });
+
     // Initialize Lucide icons
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
