@@ -202,7 +202,99 @@
             $allProducts = collect($featuredProducts ?? [])->merge(collect($bestSellers ?? []))->unique('id')->take(8);
         @endphp
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Mobile: Horizontal Scroll -->
+        <div class="md:hidden overflow-x-auto pb-6 -mx-4 px-4">
+            <div class="flex gap-4" style="width: max-content;">
+                @forelse($allProducts as $product)
+                    <div class="w-64 flex-shrink-0 group product-card bg-white rounded-3xl overflow-hidden border-2 border-[#F5F0E8] hover:border-[#DCCBBC] hover:shadow-2xl transition-all duration-500" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
+                        <!-- Image Container -->
+                        <div class="relative overflow-hidden bg-[#F5F0E8]">
+                            <a href="{{ route('product.show', $product->slug) }}">
+                                @if($product->image)
+                                    <img src="{{ $product->image }}" 
+                                         alt="{{ $product->name }}" 
+                                         loading="lazy"
+                                         class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700"
+                                         onerror="this.src='https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=400&h=400&fit=crop'">
+                                @else
+                                    <img src="https://images.unsplash.com/photo-1601570377889-7ea32e36a3b8?w=400&h=400&fit=crop" 
+                                         alt="{{ $product->name }}"
+                                         loading="lazy"
+                                         class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700">
+                                @endif
+                            </a>
+                            
+                            <!-- Wishlist Button -->
+                            <button class="absolute top-4 right-4 w-11 h-11 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-[#DCCBBC] transition-all shadow-lg group-hover:scale-110 hover:shadow-xl">
+                                <i data-lucide="heart" class="w-5 h-5 text-[#947765] hover:text-white transition-colors"></i>
+                            </button>
+                            
+                            <!-- NEW badge for first 2 products -->
+                            @if($loop->index < 2)
+                                <div class="absolute top-4 left-4 bg-[#947765] text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                                    <iconify-icon icon="solar:star-bold" class="inline-block w-3 h-3"></iconify-icon> NEW
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <!-- Product Info -->
+                        <div class="p-5">
+                            <h3 class="font-serif text-base font-bold text-[#947765] mb-2 group-hover:text-[#DCCBBC] transition line-clamp-2 min-h-[3rem]">
+                                <a href="{{ route('product.show', $product->slug) }}">
+                                    {{ $product->name }}
+                                </a>
+                            </h3>
+                            
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-[#947765] text-xl font-bold">
+                                    Rp {{ number_format($product->price, 0, ',', '.') }}
+                                </p>
+                            </div>
+                            
+                            <!-- Rating & Stock -->
+                            <div class="flex items-center justify-between text-xs mb-4">
+                                <div class="flex items-center gap-1">
+                                    @for($i = 0; $i < 5; $i++)
+                                        @if($i < 4)
+                                            <i data-lucide="star" class="w-3 h-3 fill-[#DCCBBC] text-[#DCCBBC]"></i>
+                                        @else
+                                            <i data-lucide="star" class="w-3 h-3 text-gray-300"></i>
+                                        @endif
+                                    @endfor
+                                    <span class="text-[#947765]/70 ml-1 font-medium">({{ rand(50, 999) }})</span>
+                                </div>
+                                @if($product->isInStock())
+                                    <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold text-[10px]">In Stock</span>
+                                @else
+                                    <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-semibold text-[10px]">Out</span>
+                                @endif
+                            </div>
+                            
+                            <!-- Add to Cart Button -->
+                            <button class="w-full bg-[#DCCBBC] hover:bg-[#947765] text-[#342C28] hover:text-white font-semibold py-2.5 rounded-full transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-2 text-sm">
+                                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-12 text-mocha w-full">
+                        <p>No featured products available at the moment.</p>
+                    </div>
+                @endforelse
+            </div>
+            <!-- Scroll indicator -->
+            <div class="text-center mt-4">
+                <p class="text-xs text-mocha/60">
+                    <i data-lucide="arrow-left" class="w-3 h-3 inline-block"></i>
+                    Swipe to see more
+                    <i data-lucide="arrow-right" class="w-3 h-3 inline-block"></i>
+                </p>
+            </div>
+        </div>
+
+        <!-- Desktop: Grid Layout -->
+        <div class="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-6">
             @forelse($allProducts as $product)
                 <div class="group product-card bg-white rounded-3xl overflow-hidden border-2 border-[#F5F0E8] hover:border-[#DCCBBC] hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
                     <!-- Image Container -->
