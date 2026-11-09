@@ -142,8 +142,8 @@
                             </div>
                         </div>
                     @else
-                        <a href="{{ route('login') }}" class="hidden md:block text-sm text-espresso hover:text-mocha transition font-medium">Login</a>
-                        <a href="{{ route('register') }}" class="hidden md:block btn-primary text-sm px-4 py-1.5">Register</a>
+                        <a href="{{ route('login') }}" class="text-sm text-espresso hover:text-mocha transition font-medium">Login</a>
+                        <a href="{{ route('register') }}" class="btn-primary text-sm px-4 py-1.5">Register</a>
                     @endauth
 
                     <!-- Mobile Menu Button -->
