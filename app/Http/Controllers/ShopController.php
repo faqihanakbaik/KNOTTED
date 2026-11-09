@@ -10,6 +10,15 @@ class ShopController extends Controller
 {
     public function index(Request $request)
     {
+        // Cache categories for 10 minutes (they don't change often)
+        $categories = cache()->remember('shop_categories_with_count', 600, function() {
+            return Category::withCount(['products' => function($q) {
+                $q->whereHas('variations', function($v) {
+                    $v->where('stock_quantity', '>', 0);
+                })->where('is_active', true);
+            }])->get();
+        });
+
         $query = Product::with(['category', 'variations'])->inStock();
 
         // Category filter
@@ -52,11 +61,6 @@ class ShopController extends Controller
         }
 
         $products = $query->paginate(12)->withQueryString();
-        $categories = Category::withCount(['products' => function($q) {
-            $q->whereHas('variations', function($v) {
-                $v->where('stock_quantity', '>', 0);
-            })->where('is_active', true);
-        }])->get();
 
         return view('shop.index', compact('products', 'categories'));
     }

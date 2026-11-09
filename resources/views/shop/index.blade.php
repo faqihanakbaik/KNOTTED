@@ -96,9 +96,9 @@
                     <div class="product-card">
                         <a href="{{ route('product.show', $product->slug) }}">
                             @if($product->image)
-                                <img src="{{ $product->image }}" alt="{{ $product->name }}" onerror="this.src='https://via.placeholder.com/400x400/F5F0E8/342C28?text={{ urlencode($product->name) }}'">
+                                <img src="{{ $product->image }}" alt="{{ $product->name }}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x400/F5F0E8/342C28?text={{ urlencode($product->name) }}'">
                             @else
-                                <img src="https://via.placeholder.com/400x400/F5F0E8/342C28?text={{ urlencode($product->name) }}" alt="{{ $product->name }}">
+                                <img src="https://via.placeholder.com/400x400/F5F0E8/342C28?text={{ urlencode($product->name) }}" alt="{{ $product->name }}" loading="lazy">
                             @endif
                             @if($product->is_featured)
                                 <span class="absolute top-2 right-2 bg-sage text-white px-3 py-1 rounded-full text-xs font-semibold">

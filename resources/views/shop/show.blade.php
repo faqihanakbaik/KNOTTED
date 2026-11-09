@@ -23,9 +23,9 @@
                 <!-- Main Image -->
                 <div class="bg-white rounded-lg overflow-hidden shadow-sm border border-oat mb-4">
                     @if($product->image)
-                        <img id="main-product-image" src="{{ $product->image }}" alt="{{ $product->name }}" class="w-full h-auto" onerror="this.src='https://via.placeholder.com/800x800/F5F0E8/342C28?text={{ urlencode($product->name) }}'">
+                        <img id="main-product-image" src="{{ $product->image }}" alt="{{ $product->name }}" class="w-full h-auto" loading="eager" onerror="this.src='https://via.placeholder.com/800x800/F5F0E8/342C28?text={{ urlencode($product->name) }}'">
                     @else
-                        <img id="main-product-image" src="https://via.placeholder.com/800x800/F5F0E8/342C28?text={{ urlencode($product->name) }}" alt="{{ $product->name }}" class="w-full h-auto">
+                        <img id="main-product-image" src="https://via.placeholder.com/800x800/F5F0E8/342C28?text={{ urlencode($product->name) }}" alt="{{ $product->name }}" class="w-full h-auto" loading="eager">
                     @endif
                 </div>
 
@@ -35,7 +35,7 @@
                         @foreach($product->productImages as $image)
                             <div class="bg-white rounded-lg overflow-hidden shadow-sm border border-oat cursor-pointer hover:border-sage transition"
                                  onclick="changeMainImage('{{ $image->image_url }}')">
-                                <img src="{{ $image->image_url }}" alt="Product image" class="w-full h-24 object-cover">
+                                <img src="{{ $image->image_url }}" alt="Product image" class="w-full h-24 object-cover" loading="lazy">
                             </div>
                         @endforeach
                     </div>
@@ -194,9 +194,9 @@
                         <div class="product-card">
                             <a href="{{ route('product.show', $related->slug) }}">
                                 @if($related->image)
-                                    <img src="{{ $related->image }}" alt="{{ $related->name }}" onerror="this.src='https://via.placeholder.com/300x300/F5F0E8/342C28?text={{ urlencode($related->name) }}'">
+                                    <img src="{{ $related->image }}" alt="{{ $related->name }}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x300/F5F0E8/342C28?text={{ urlencode($related->name) }}'">
                                 @else
-                                    <img src="https://via.placeholder.com/300x300/F5F0E8/342C28?text={{ urlencode($related->name) }}" alt="{{ $related->name }}">
+                                    <img src="https://via.placeholder.com/300x300/F5F0E8/342C28?text={{ urlencode($related->name) }}" alt="{{ $related->name }}" loading="lazy">
                                 @endif
                             </a>
                             <div class="p-4">
