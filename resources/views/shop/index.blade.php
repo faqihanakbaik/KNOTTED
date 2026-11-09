@@ -158,4 +158,8 @@
         @endif
     </div>
 </div>
+
+@push('scripts')
+<script src="{{ asset('js/shop-filter.js') }}" defer></script>
+@endpush
 @endsection
