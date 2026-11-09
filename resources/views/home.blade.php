@@ -4,7 +4,7 @@
 
 @section('content')
 <!-- Hero Section with Product Carousel -->
-<section class="relative bg-[#F5F0E8] pt-32 pb-16 md:pt-40 md:pb-24 flex items-center overflow-hidden">
+<section class="relative bg-[#F5F0E8] pt-6 pb-16 md:pt-8 md:pb-24 flex items-center overflow-hidden">
     <!-- Decorative Elements -->
     <div class="absolute top-10 right-10 w-32 h-32 bg-[#DCCBBC]/10 rounded-full blur-3xl"></div>
     <div class="absolute bottom-10 left-10 w-40 h-40 bg-[#F5F0E8]/10 rounded-full blur-3xl"></div>
