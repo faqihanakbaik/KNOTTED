@@ -51,7 +51,7 @@ class ShopController extends Controller
                 $query->latest();
         }
 
-        $products = $query->paginate(12);
+        $products = $query->paginate(12)->withQueryString();
         $categories = Category::withCount(['products' => function($q) {
             $q->whereHas('variations', function($v) {
                 $v->where('stock_quantity', '>', 0);
