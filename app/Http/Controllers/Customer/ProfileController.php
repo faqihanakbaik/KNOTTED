@@ -45,8 +45,21 @@ class ProfileController extends Controller
             return back()->withErrors(['current_password' => 'Current password is incorrect.']);
         }
 
+        // Update password
         $user->update(['password' => Hash::make($request->password)]);
 
-        return back()->with('success', 'Password updated successfully!');
+        // Security: Logout from all devices/sessions after password change
+        auth()->logoutOtherDevices($request->current_password);
+        
+        // Logout current session
+        auth()->logout();
+        
+        // Invalidate session
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // Redirect to login with success message
+        return redirect()->route('login')
+            ->with('success', 'Password updated successfully! Please login with your new password.');
     }
 }
