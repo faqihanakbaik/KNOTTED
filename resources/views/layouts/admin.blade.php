@@ -162,5 +162,8 @@
             });
         }, 5000);
     </script>
+    
+    <!-- Admin Filter Auto-Submit -->
+    <script src="{{ asset('js/admin-filter.js') }}" defer></script>
 </body>
 </html>

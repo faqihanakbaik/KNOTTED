@@ -12,15 +12,37 @@ class OrderManagementController extends Controller
     {
         $query = Order::with(['user', 'payment']);
 
-        if ($request->has('status') && $request->status != '') {
+        // Status filter
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('payment_status') && $request->payment_status != '') {
+        // Payment status filter
+        if ($request->filled('payment_status')) {
             $query->where('payment_status', $request->payment_status);
         }
 
-        $orders = $query->latest()->paginate(20);
+        // Search by order number or customer name/email
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('order_number', 'like', '%' . $searchTerm . '%')
+                  ->orWhereHas('user', function($userQuery) use ($searchTerm) {
+                      $userQuery->where('name', 'like', '%' . $searchTerm . '%')
+                                ->orWhere('email', 'like', '%' . $searchTerm . '%');
+                  });
+            });
+        }
+
+        // Date range filter
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $orders = $query->latest()->paginate(20)->withQueryString();
 
         return view('admin.orders.index', compact('orders'));
     }
