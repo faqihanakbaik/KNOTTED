@@ -43,7 +43,7 @@
                 </a>
 
                 <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center gap-10 lg:gap-16">
+                <div class="hidden md:flex items-center gap-4 lg:gap-6">
                     <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
                     <div class="relative group">
                         <button class="nav-link flex items-center gap-1">
