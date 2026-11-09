@@ -8,12 +8,13 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://code.iconify.design/iconify-icon/2.0.0/iconify-icon.min.js"></script>
     
-    <!-- Tab Authentication -->
+    <!-- Tab Authentication - ADMIN STRICT MODE -->
     <meta name="auth-required" content="true">
+    <meta name="admin-mode" content="true">
     @if(session('tab_token'))
     <meta name="tab-token" content="{{ session('tab_token') }}">
     @endif
-    <script src="{{ asset('js/tab-auth.js') }}" defer></script>
+    <script src="{{ asset('js/admin-tab-auth.js') }}" defer></script>
     
     <style>
         /* Remove default margins */

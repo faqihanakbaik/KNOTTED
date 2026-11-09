@@ -105,8 +105,8 @@ Route::middleware(['auth', 'customer'])->group(function () {
     Route::patch('/customer/profile/password', [ProfileController::class, 'updatePassword'])->name('customer.profile.password');
 });
 
-// Admin Routes (Requires Admin Role)
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+// Admin Routes (Requires Admin Role + Tab Security)
+Route::middleware(['auth', 'admin', 'admin.tab.security'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

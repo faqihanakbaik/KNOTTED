@@ -17,10 +17,17 @@
     <!-- Tab Authentication -->
     @auth
     <meta name="auth-required" content="true">
+    @if(auth()->user()->isAdmin())
+    <meta name="admin-mode" content="true">
+    @endif
     @if(session('tab_token'))
     <meta name="tab-token" content="{{ session('tab_token') }}">
     @endif
-    <script src="{{ asset('js/tab-auth.js') }}" defer></script>
+    @if(auth()->user()->isAdmin())
+    <script src="{{ asset('js/admin-tab-auth.js') }}" defer></script>
+    @else
+    <script src="{{ asset('js/customer-tab-auth.js') }}" defer></script>
+    @endif
     @endauth
     
     <style>
