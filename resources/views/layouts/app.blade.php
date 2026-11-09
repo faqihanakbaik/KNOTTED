@@ -66,16 +66,16 @@
                 </div>
 
                 <!-- Right Navigation -->
-                <div class="flex items-center gap-6">
-                    <!-- Search Icon -->
-                    <button class="text-espresso hover:text-mocha transition">
+                <div class="flex items-center gap-4 md:gap-6">
+                    <!-- Search Icon (Hidden on mobile for space) -->
+                    <button class="hidden sm:block text-espresso hover:text-mocha transition">
                         <i data-lucide="search" class="w-5 h-5"></i>
                     </button>
 
                     @auth
                         <!-- Cart (Only for customers) -->
                         @if(!auth()->user()->isAdmin())
-                            <a href="{{ route('cart.index') }}" class="relative text-espresso hover:text-mocha transition">
+                            <a href="{{ route('cart.index') }}" class="hidden md:block relative text-espresso hover:text-mocha transition">
                                 <i data-lucide="shopping-bag" class="w-5 h-5"></i>
                                 @if(auth()->user()->cart && auth()->user()->cart->items->count() > 0)
                                     <span class="absolute -top-2 -right-2 bg-espresso text-cream text-xs rounded-full h-4 w-4 flex items-center justify-center font-semibold text-[10px]">
@@ -85,8 +85,8 @@
                             </a>
                         @endif
                         
-                        <!-- User Dropdown -->
-                        <div class="relative group">
+                        <!-- User Dropdown (Desktop only) -->
+                        <div class="hidden md:block relative group">
                             <button class="text-espresso hover:text-mocha transition">
                                 <i data-lucide="user" class="w-5 h-5"></i>
                             </button>
@@ -135,25 +135,96 @@
                             </div>
                         </div>
                     @else
-                        <a href="{{ route('login') }}" class="text-sm text-espresso hover:text-mocha transition font-medium">Login</a>
-                        <a href="{{ route('register') }}" class="btn-primary text-sm px-4 py-1.5">Register</a>
+                        <a href="{{ route('login') }}" class="hidden md:block text-sm text-espresso hover:text-mocha transition font-medium">Login</a>
+                        <a href="{{ route('register') }}" class="hidden md:block btn-primary text-sm px-4 py-1.5">Register</a>
                     @endauth
 
                     <!-- Mobile Menu Button -->
-                    <button id="mobile-menu-btn" class="md:hidden text-espresso">
-                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    <button id="mobile-menu-btn" class="md:hidden text-espresso p-2 hover:bg-cream rounded-lg transition">
+                        <i data-lucide="menu" id="menu-icon" class="w-6 h-6"></i>
+                        <i data-lucide="x" id="close-icon" class="w-6 h-6 hidden"></i>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden border-t border-oat">
-            <div class="px-4 py-3 space-y-2">
-                <a href="{{ route('home') }}" class="block text-espresso hover:text-mocha transition text-sm">Home</a>
-                <a href="{{ route('shop.index') }}" class="block text-espresso hover:text-mocha transition text-sm">Shop</a>
-                <a href="{{ route('about') }}" class="block text-espresso hover:text-mocha transition text-sm">About</a>
-                <a href="{{ route('contact') }}" class="block text-espresso hover:text-mocha transition text-sm">Contact</a>
+        <div id="mobile-menu" class="hidden md:hidden border-t border-oat bg-white shadow-lg">
+            <div class="px-4 py-4 space-y-1">
+                <!-- Main Navigation -->
+                <a href="{{ route('home') }}" class="block px-3 py-3 text-espresso hover:bg-cream transition rounded-lg text-base font-medium {{ request()->routeIs('home') ? 'bg-cream' : '' }}">
+                    <i data-lucide="home" class="w-4 h-4 inline-block mr-2"></i>Home
+                </a>
+                <a href="{{ route('shop.index') }}" class="block px-3 py-3 text-espresso hover:bg-cream transition rounded-lg text-base font-medium {{ request()->routeIs('shop.*') ? 'bg-cream' : '' }}">
+                    <i data-lucide="shopping-bag" class="w-4 h-4 inline-block mr-2"></i>Shop
+                </a>
+                <a href="{{ route('about') }}" class="block px-3 py-3 text-espresso hover:bg-cream transition rounded-lg text-base font-medium {{ request()->routeIs('about') ? 'bg-cream' : '' }}">
+                    <i data-lucide="info" class="w-4 h-4 inline-block mr-2"></i>About
+                </a>
+                <a href="{{ route('contact') }}" class="block px-3 py-3 text-espresso hover:bg-cream transition rounded-lg text-base font-medium {{ request()->routeIs('contact') ? 'bg-cream' : '' }}">
+                    <i data-lucide="mail" class="w-4 h-4 inline-block mr-2"></i>Contact
+                </a>
+                <a href="{{ route('faq') }}" class="block px-3 py-3 text-espresso hover:bg-cream transition rounded-lg text-base font-medium {{ request()->routeIs('faq') ? 'bg-cream' : '' }}">
+                    <i data-lucide="help-circle" class="w-4 h-4 inline-block mr-2"></i>FAQ
+                </a>
+                
+                @auth
+                    <!-- Divider -->
+                    <div class="border-t border-oat my-2"></div>
+                    
+                    <!-- User Section -->
+                    <div class="px-3 py-2">
+                        <p class="text-xs text-mocha uppercase tracking-wide font-semibold">Account</p>
+                    </div>
+                    
+                    @if(auth()->user()->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" class="block px-3 py-3 text-espresso hover:bg-cream transition rounded-lg text-base font-medium">
+                            <i data-lucide="shield" class="w-4 h-4 inline-block mr-2"></i>Admin Dashboard
+                        </a>
+                    @else
+                        <a href="{{ route('customer.dashboard') }}" class="block px-3 py-3 text-espresso hover:bg-cream transition rounded-lg text-base font-medium">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4 inline-block mr-2"></i>Dashboard
+                        </a>
+                        <a href="{{ route('cart.index') }}" class="block px-3 py-3 text-espresso hover:bg-cream transition rounded-lg text-base font-medium">
+                            <i data-lucide="shopping-cart" class="w-4 h-4 inline-block mr-2"></i>Cart
+                            @if(auth()->user()->cart && auth()->user()->cart->items->count() > 0)
+                                <span class="inline-block ml-1 bg-espresso text-cream text-xs rounded-full px-2 py-0.5">
+                                    {{ auth()->user()->cart->getTotalItems() }}
+                                </span>
+                            @endif
+                        </a>
+                        <a href="{{ route('customer.orders.index') }}" class="block px-3 py-3 text-espresso hover:bg-cream transition rounded-lg text-base font-medium">
+                            <i data-lucide="package" class="w-4 h-4 inline-block mr-2"></i>My Orders
+                        </a>
+                        <a href="{{ route('customer.custom-orders.index') }}" class="block px-3 py-3 text-espresso hover:bg-cream transition rounded-lg text-base font-medium">
+                            <i data-lucide="wand-2" class="w-4 h-4 inline-block mr-2"></i>Custom Requests
+                        </a>
+                        <a href="{{ route('customer.addresses.index') }}" class="block px-3 py-3 text-espresso hover:bg-cream transition rounded-lg text-base font-medium">
+                            <i data-lucide="map-pin" class="w-4 h-4 inline-block mr-2"></i>Addresses
+                        </a>
+                        <a href="{{ route('customer.profile') }}" class="block px-3 py-3 text-espresso hover:bg-cream transition rounded-lg text-base font-medium">
+                            <i data-lucide="user-circle" class="w-4 h-4 inline-block mr-2"></i>Profile
+                        </a>
+                    @endif
+                    
+                    <form method="POST" action="{{ route('logout') }}" class="mt-2">
+                        @csrf
+                        <button type="submit" class="w-full text-left px-3 py-3 text-espresso hover:bg-red-50 transition rounded-lg text-base font-medium">
+                            <i data-lucide="log-out" class="w-4 h-4 inline-block mr-2"></i>Logout
+                        </button>
+                    </form>
+                @else
+                    <!-- Divider -->
+                    <div class="border-t border-oat my-2"></div>
+                    
+                    <!-- Auth Links -->
+                    <a href="{{ route('login') }}" class="block px-3 py-3 text-espresso hover:bg-cream transition rounded-lg text-base font-medium">
+                        <i data-lucide="log-in" class="w-4 h-4 inline-block mr-2"></i>Login
+                    </a>
+                    <a href="{{ route('register') }}" class="block px-3 py-3 bg-espresso text-cream hover:bg-mocha transition rounded-lg text-base font-medium text-center">
+                        <i data-lucide="user-plus" class="w-4 h-4 inline-block mr-2"></i>Register
+                    </a>
+                @endauth
             </div>
         </div>
     </nav>
@@ -248,8 +319,18 @@
         lucide.createIcons();
         
         // Mobile menu toggle
-        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+            menuIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+            
+            // Re-initialize icons after toggle
+            setTimeout(() => lucide.createIcons(), 10);
         });
 
         // Auto-hide flash messages

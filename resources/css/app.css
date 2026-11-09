@@ -518,3 +518,88 @@ html {
         display: none !important;
     }
 }
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    /* Larger touch targets for mobile (minimum 44x44px per WCAG) */
+    .btn-primary,
+    .btn-secondary,
+    .btn-sage,
+    .btn-danger {
+        @apply min-h-[44px] px-6 py-3 text-base;
+    }
+    
+    /* Form inputs with better touch targets */
+    .form-input {
+        @apply min-h-[44px] text-base;
+    }
+    
+    /* Mobile-friendly product cards */
+    .product-card img {
+        @apply h-48;
+    }
+    
+    /* Larger clickable areas for links */
+    a {
+        @apply inline-block;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    /* Table horizontal scroll */
+    .table-responsive {
+        @apply overflow-x-auto -mx-4 px-4;
+    }
+    
+    .table {
+        @apply min-w-max;
+    }
+    
+    /* Better spacing on mobile */
+    .section-title {
+        @apply text-2xl md:text-4xl;
+    }
+    
+    .hero-title {
+        @apply text-3xl md:text-6xl;
+    }
+    
+    /* Mobile navigation improvements */
+    .nav-link {
+        @apply min-h-[44px] flex items-center;
+    }
+    
+    /* Prevent text zoom on input focus (iOS) */
+    select,
+    textarea,
+    input[type="text"],
+    input[type="password"],
+    input[type="datetime"],
+    input[type="datetime-local"],
+    input[type="date"],
+    input[type="month"],
+    input[type="time"],
+    input[type="week"],
+    input[type="number"],
+    input[type="email"],
+    input[type="url"],
+    input[type="search"],
+    input[type="tel"],
+    input[type="color"] {
+        font-size: 16px !important;
+    }
+}
+
+/* Safe area for notched devices */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+    
+    nav {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+}
