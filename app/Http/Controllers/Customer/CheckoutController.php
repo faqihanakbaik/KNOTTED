@@ -99,8 +99,6 @@ class CheckoutController extends Controller
                     'product_id' => $item->product_id,
                     'variation_id' => $item->variation_id,
                     'product_name' => $item->product->name,
-                    'sku_snapshot' => $item->variation ? $item->variation->getFullSku() : $item->product->sku,
-                    'size_snapshot' => $item->variation ? $item->variation->size : null,
                     'quantity' => $item->quantity,
                     'price' => $item->price,
                     'subtotal' => $item->price * $item->quantity,
