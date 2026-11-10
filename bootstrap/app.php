@@ -23,6 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Trust Railway proxies for HTTPS detection
         $middleware->trustProxies(at: '*');
         
+        // Use custom VerifyCsrfToken middleware
+        $middleware->validateCsrfTokens(except: [
+            // Exclude these routes from CSRF verification if needed
+        ]);
+        
         // SecureSession TIDAK dipasang secara global.
         // Login dan session Laravel menggunakan mekanisme standar.
     })

@@ -25,6 +25,24 @@ use App\Http\Controllers\Admin\CustomOrderController as AdminCustomOrderControll
 use App\Http\Controllers\Admin\StoreSettingController;
 
 // Public Routes
+Route::get('/debug-session', function () {
+    return response()->json([
+        'session_driver' => config('session.driver'),
+        'session_secure' => config('session.secure'),
+        'session_same_site' => config('session.same_site'),
+        'session_domain' => config('session.domain'),
+        'session_encrypt' => config('session.encrypt'),
+        'is_railway' => config('railway.is_railway'),
+        'has_session' => session()->isStarted(),
+        'session_id' => session()->getId(),
+        'csrf_token' => csrf_token(),
+        'environment' => app()->environment(),
+        'railway_env' => $_SERVER['RAILWAY_ENVIRONMENT'] ?? 'not set',
+        'http_host' => $_SERVER['HTTP_HOST'] ?? 'not set',
+        'app_url' => config('app.url'),
+    ]);
+})->name('debug.session');
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
