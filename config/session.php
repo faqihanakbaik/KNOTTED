@@ -18,7 +18,9 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'database'),
+    'driver' => config('railway.is_railway') 
+        ? 'database' 
+        : env('SESSION_DRIVER', 'database'),
 
     /*
     |--------------------------------------------------------------------------
@@ -167,9 +169,14 @@ return [
     | to the server if the browser has a HTTPS connection. This will keep
     | the cookie from being sent to you when it can't be done securely.
     |
+    | For Railway/reverse proxy setups, set to false as HTTPS is handled
+    | at the proxy level. Laravel sees requests as HTTP behind the proxy.
+    |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE', false),
+    'secure' => config('railway.is_railway') 
+        ? false 
+        : env('SESSION_SECURE_COOKIE', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -199,7 +206,9 @@ return [
     |
     */
 
-    'same_site' => env('SESSION_SAME_SITE', 'lax'),
+    'same_site' => config('railway.is_railway') 
+        ? 'lax' 
+        : env('SESSION_SAME_SITE', 'lax'),
 
     /*
     |--------------------------------------------------------------------------
